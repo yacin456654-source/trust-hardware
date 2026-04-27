@@ -3,220 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TRUST HARDWARE | ثقة وضمان</title>
-    
+    <title>TRUST HARDWARE | عربة التسوق</title>
     <link rel="icon" type="image/jpg" href="https://scontent.floo1-2.fna.fbcdn.net/v/t39.30808-1/682006759_122095180376344266_5380399349240977356_n.jpg?stp=dst-jpg_s160x160_tt6&_nc_cat=104&ccb=1-7&_nc_sid=1d2534&_nc_ohc=F8ArBc2in4EQ7kNvwE59jEr&_nc_oc=AdqSQL9UW2FqvMmynIS3b37eom0-7urCMfI_exNmQI6jFgPBaGKlTXf6n0n4kbbp_E0&_nc_zt=24&_nc_ht=scontent.floo1-2.fna&_nc_gid=Tn2WacjLMDww-TRhwhXfBA&_nc_ss=7b2a8&oh=00_Af3Zi8oEiwkhfktys-FC-pbJ5jPVQXbpR0mp8Sju-TaCTg&oe=69F59C1A">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-        body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: white; margin: 0; }
-        .admin-section { display: none; background: #1e293b; padding: 20px; border-radius: 15px; border: 2px dashed #f59e0b; margin: 20px auto; max-width: 1200px; }
+        body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: white; }
+        .product-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; transition: 0.3s; }
+        .product-card:hover { border-color: #f59e0b; }
+        .cart-badge { position: fixed; bottom: 20px; left: 20px; background: #f59e0b; color: black; padding: 15px 25px; border-radius: 50px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: bold; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 100; transition: 0.3s; }
+        .cart-badge:hover { transform: scale(1.05); background: white; }
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; overflow-y: auto; }
-        .product-card { background: #1e293b; transition: 0.3s; border: 1px solid #334155; border-radius: 12px; overflow: hidden; padding: 15px; text-align: center; }
-        .product-card:hover { border-color: #f59e0b; transform: translateY(-5px); }
-        .order-input { color: black !important; background: white !important; font-weight: bold; border: 2px solid #334155; }
-        .cat-btn { background: #334155; padding: 8px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; transition: 0.3s; border: 1px solid transparent; }
-        .cat-btn.active { background: #f59e0b; color: black; border-color: white; }
+        .admin-section { display: none; background: #1e293b; padding: 25px; border-radius: 15px; border: 2px solid #f59e0b; margin: 20px auto; max-width: 1300px; }
+        .order-input { color: black !important; background: white !important; font-weight: bold; border: 2px solid #334155; padding: 12px; border-radius: 8px; width: 100%; }
     </style>
 </head>
 <body>
 
-    <div class="bg-amber-500 text-black py-2 px-4 flex justify-between items-center font-bold shadow-lg text-xs md:text-sm">
-        <div class="flex items-center space-x-reverse space-x-4">
-            <a href="tel:0659992619" class="hover:text-white transition"><i class="fas fa-phone-alt ml-1"></i> 0659992619</a>
-            <a href="https://www.facebook.com/profile.php?id=61560327990792" target="_blank" class="hover:text-white transition"><i class="fab fa-facebook text-lg ml-1"></i> فيسبوك</a>
-        </div>
-        <span class="hidden sm:inline">ثقة وضمان</span>
-    </div>
-
-    <header class="bg-slate-900 border-b border-amber-500 sticky top-0 z-50 shadow-md">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-reverse space-x-4">
-                <img src="https://scontent.floo1-2.fna.fbcdn.net/v/t39.30808-1/682006759_122095180376344266_5380399349240977356_n.jpg?stp=dst-jpg_s160x160_tt6&_nc_cat=104&ccb=1-7&_nc_sid=1d2534&_nc_ohc=F8ArBc2in4EQ7kNvwE59jEr&_nc_oc=AdqSQL9UW2FqvMmynIS3b37eom0-7urCMfI_exNmQI6jFgPBaGKlTXf6n0n4kbbp_E0&_nc_zt=24&_nc_ht=scontent.floo1-2.fna&_nc_gid=Tn2WacjLMDww-TRhwhXfBA&_nc_ss=7b2a8&oh=00_Af3Zi8oEiwkhfktys-FC-pbJ5jPVQXbpR0mp8Sju-TaCTg&oe=69F59C1A" 
-                     alt="TRUST LOGO" 
-                     class="h-14 w-14 object-contain rounded-full border border-amber-500 transition-transform hover:scale-110">
-                <h1 class="text-lg font-bold text-amber-500 uppercase tracking-tighter">Trust Hardware</h1>
+    <header class="bg-slate-900 border-b border-amber-500 sticky top-0 z-50 p-3">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <img src="https://scontent.floo1-2.fna.fbcdn.net/v/t39.30808-1/682006759_122095180376344266_5380399349240977356_n.jpg?stp=dst-jpg_s160x160_tt6&_nc_cat=104&ccb=1-7&_nc_sid=1d2534&_nc_ohc=F8ArBc2in4EQ7kNvwE59jEr&_nc_oc=AdqSQL9UW2FqvMmynIS3b37eom0-7urCMfI_exNmQI6jFgPBaGKlTXf6n0n4kbbp_E0&_nc_zt=24&_nc_ht=scontent.floo1-2.fna&_nc_gid=Tn2WacjLMDww-TRhwhXfBA&_nc_ss=7b2a8&oh=00_Af3Zi8oEiwkhfktys-FC-pbJ5jPVQXbpR0mp8Sju-TaCTg&oe=69F59C1A" class="h-12 w-12 rounded-full border border-amber-500">
+                <h1 class="text-xl font-bold text-amber-500">TRUST HARDWARE</h1>
             </div>
-            <div class="flex-1 max-w-md mx-4 relative">
-                <input type="text" id="mainSearch" onkeyup="filterProducts()" placeholder="ابحث عن أداة..." class="w-full bg-slate-800 border border-slate-700 rounded-full py-2 px-10 focus:border-amber-500 outline-none text-sm text-white text-center">
-                <i class="fas fa-search absolute right-3.5 top-2.5 text-slate-500"></i>
-            </div>
-            <button onclick="accessAdmin()" class="text-slate-500 hover:text-amber-500 transition-all"><i class="fas fa-user-shield text-xl"></i></button>
+            <button onclick="accessAdmin()" class="text-slate-500"><i class="fas fa-user-shield text-xl"></i></button>
         </div>
     </header>
 
-    <section id="admin-panel" class="container mx-auto px-4 admin-section">
-        <div class="flex justify-between items-center mb-4 text-amber-500 font-bold border-b border-slate-700 pb-2">
-            <h3>لوحة التحكم</h3>
-            <button onclick="closeAdmin()" class="text-red-400">إغلاق [X]</button>
+    <section id="admin-panel" class="container mx-auto admin-section shadow-2xl">
+        <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-3">
+            <h2 class="text-2xl font-bold text-amber-500">لوحة تحكم البائع</h2>
+            <button onclick="closeAdmin()" class="bg-red-600 px-4 py-1 rounded text-sm">إغلاق</button>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div class="bg-slate-800 p-4 rounded-xl border border-amber-500/30">
-                <p class="text-xs text-amber-400 font-bold mb-3 underline">1. المجلدات:</p>
-                <input type="text" id="new-cat-name" placeholder="اسم المجلد" class="w-full bg-slate-700 p-2 rounded text-white text-sm mb-2 outline-none">
-                <button onclick="addNewCategory()" class="w-full bg-blue-600 text-white font-bold py-2 rounded">إضافة</button>
-                <div id="admin-cats-list" class="mt-4 space-y-1 text-xs text-slate-400"></div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="bg-slate-900 p-6 rounded-xl border border-slate-700">
+                <h3 class="text-amber-500 font-bold mb-4 underline"><i class="fas fa-shopping-basket ml-2"></i> قائمة الطلبات الواردة</h3>
+                <div id="orders-list" class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                    </div>
             </div>
 
-            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                <p class="text-xs text-amber-400 font-bold mb-3 underline">2. نشر سلعة:</p>
-                <select id="p-cat-select" class="w-full bg-slate-700 p-2 rounded text-white text-sm mb-2 outline-none"></select>
-                <input type="text" id="p-name" placeholder="اسم السلعة" class="w-full bg-slate-700 p-2 rounded text-white text-sm mb-2 outline-none">
-                <input type="number" id="p-price" placeholder="السعر" class="w-full bg-slate-700 p-2 rounded text-white text-sm mb-2 outline-none">
-                <input type="text" id="p-img" placeholder="رابط الصورة" class="w-full bg-slate-700 p-2 rounded text-white text-sm mb-2 outline-none">
-                <button onclick="addNewProduct()" class="w-full bg-amber-500 text-black font-extrabold py-3 rounded-lg">نشر الآن</button>
-            </div>
-
-            <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 shadow-inner">
-                <h4 class="text-amber-500 font-bold text-[10px] mb-3 uppercase">إدارة السلع:</h4>
-                <div id="admin-products-list" class="max-h-60 overflow-y-auto space-y-2"></div>
-            </div>
-
-            <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 shadow-inner">
-                <h4 class="text-amber-500 font-bold text-[10px] mb-3 uppercase">الطلبات:</h4>
-                <div id="orders-list" class="max-h-60 overflow-y-auto space-y-2"></div>
+            <div class="grid grid-cols-1 gap-4">
+                <div class="bg-slate-800 p-4 rounded-xl border border-blue-500/30">
+                    <p class="text-sm font-bold text-blue-400 mb-2">إضافة سلعة جديدة</p>
+                    <input type="text" id="p-name" placeholder="اسم السلعة" class="order-input mb-2">
+                    <input type="number" id="p-price" placeholder="السعر د.ج" class="order-input mb-2">
+                    <input type="text" id="p-img" placeholder="رابط الصورة" class="order-input mb-2">
+                    <button onclick="addNewProduct()" class="w-full bg-blue-600 py-3 rounded-lg font-bold">نشر السلعة</button>
+                </div>
+                <div id="admin-products-list" class="bg-slate-900 p-4 rounded-xl border border-slate-700 max-h-40 overflow-y-auto"></div>
             </div>
         </div>
     </section>
 
-    <div class="container mx-auto px-4 mt-6">
-        <div id="categories-bar" class="flex flex-wrap gap-2 justify-center"></div>
-    </div>
-
-    <main class="container mx-auto px-4 py-8">
+    <main class="container mx-auto px-4 py-10">
         <div id="products-grid" class="grid grid-cols-2 md:grid-cols-4 gap-6"></div>
     </main>
 
-    <div id="order-modal" class="modal px-4">
-        <div class="bg-slate-900 border border-amber-500 w-full max-w-lg rounded-2xl p-6 relative shadow-2xl">
-            <div id="order-form-content">
-                <h2 class="text-xl font-bold text-amber-500 mb-6 text-center italic">تأكيد الطلب</h2>
-                <div class="space-y-4">
-                    <div class="grid grid-cols-2 gap-3">
-                        <input type="text" id="c-fname" placeholder="الاسم" class="order-input p-3 rounded-lg w-full">
-                        <input type="text" id="c-lname" placeholder="اللقب" class="order-input p-3 rounded-lg w-full">
-                    </div>
-                    <input type="tel" id="c-phone" placeholder="رقم الهاتف" class="order-input w-full p-3 rounded-lg text-center">
-                    <div class="grid grid-cols-2 gap-3">
-                        <input type="text" id="c-wilaya" placeholder="الولاية" class="order-input p-3 rounded-lg w-full">
-                        <input type="text" id="c-commune" placeholder="البلدية" class="order-input p-3 rounded-lg w-full">
-                    </div>
-                    <button onclick="confirmOrderInternally()" class="w-full bg-amber-500 text-black font-extrabold py-4 rounded-xl shadow-lg">تأكيد الشراء</button>
-                    <button onclick="closeModal()" class="w-full text-slate-500 text-xs mt-2 text-center underline">إلغاء</button>
+    <div id="cart-badge" class="cart-badge" onclick="openCartModal()">
+        <i class="fas fa-shopping-cart text-xl"></i>
+        <span id="cart-count">0</span> قطعة | <span id="cart-total">0</span> د.ج
+    </div>
+
+    <div id="cart-modal" class="modal">
+        <div class="bg-slate-900 border-2 border-amber-500 w-full max-w-2xl rounded-3xl p-8 relative mx-4">
+            <h2 class="text-2xl font-bold text-amber-500 mb-6 text-center underline italic">سلة مشترياتك</h2>
+            <div id="cart-items-list" class="mb-6 space-y-4 max-h-60 overflow-y-auto border-b border-slate-700 pb-4">
                 </div>
-            </div>
-            <div id="success-screen" class="hidden text-center py-12">
-                <i class="fas fa-check-circle text-6xl text-green-500 mb-4 animate-pulse"></i>
-                <h3 class="text-2xl font-bold mb-2">تم استلام طلبك!</h3>
-                <button onclick="closeModal()" class="mt-8 bg-amber-500 text-black px-12 py-3 rounded-full font-bold">حسناً</button>
+            
+            <div id="order-form" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" id="c-fname" placeholder="الاسم" class="order-input">
+                    <input type="text" id="c-lname" placeholder="اللقب" class="order-input">
+                </div>
+                <input type="tel" id="c-phone" placeholder="رقم الهاتف" class="order-input text-center">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" id="c-wilaya" placeholder="الولاية" class="order-input">
+                    <input type="text" id="c-commune" placeholder="البلدية" class="order-input">
+                </div>
+                <button onclick="submitFinalOrder()" class="w-full bg-green-600 text-white font-extrabold py-5 rounded-2xl shadow-xl hover:bg-green-500 transition text-xl">تأكيد الطلب بالكامل</button>
+                <button onclick="closeCartModal()" class="w-full text-slate-500 underline text-sm mt-2">إغلاق</button>
             </div>
         </div>
     </div>
 
     <script>
         let products = JSON.parse(localStorage.getItem('trust_p')) || [];
+        let cart = [];
         let orders = JSON.parse(localStorage.getItem('trust_o')) || [];
-        let categories = JSON.parse(localStorage.getItem('trust_cats')) || ["أدوات يدوية", "كهرباء"];
-        let currentFilter = 'all';
-        let currentItem = null;
 
-        function saveAndRefresh() {
-            localStorage.setItem('trust_cats', JSON.stringify(categories));
-            localStorage.setItem('trust_p', JSON.stringify(products));
-            renderAll();
-        }
-
-        function renderAll() {
-            renderCategories();
-            renderProducts();
-            renderOrders();
-            const select = document.getElementById('p-cat-select');
-            select.innerHTML = `<option value="all">بدون مجلد</option>` + categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
-        }
-
-        function renderCategories() {
-            const bar = document.getElementById('categories-bar');
-            bar.innerHTML = `<div onclick="filterByCategory('all')" class="cat-btn ${currentFilter === 'all' ? 'active' : ''}">الكل</div>` +
-                categories.map(cat => `<div onclick="filterByCategory('${cat}')" class="cat-btn ${currentFilter === cat ? 'active' : ''}">${cat}</div>`).join('');
+        function renderProducts() {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = products.map((p, i) => `
+                <div class="product-card p-4 text-center">
+                    <img src="${p.img}" class="h-32 mx-auto mb-3 object-contain bg-white rounded p-2">
+                    <h3 class="font-bold text-sm h-10 overflow-hidden">${p.name}</h3>
+                    <p class="text-amber-500 font-bold text-lg my-2">${p.price} د.ج</p>
+                    <div class="flex gap-2">
+                        <button onclick="addToCart(${i})" class="bg-amber-500 text-black font-bold flex-1 py-2 rounded-lg text-xs hover:bg-white transition"><i class="fas fa-plus ml-1"></i> أضف للسلة</button>
+                    </div>
+                </div>
+            `).join('');
             
-            document.getElementById('admin-cats-list').innerHTML = categories.map((cat, i) => `
-                <div class="flex justify-between bg-slate-700 p-1 rounded mb-1 text-[10px]"><span>${cat}</span><button onclick="deleteCategory(${i})" class="text-red-400">X</button></div>
+            document.getElementById('admin-products-list').innerHTML = products.map((p, i) => `
+                <div class="flex justify-between text-[10px] bg-slate-800 p-2 rounded mb-1"><span>${p.name}</span><button onclick="deleteProduct(${i})" class="text-red-500">حذف</button></div>
             `).join('');
         }
 
-        function filterByCategory(cat) { currentFilter = cat; renderAll(); }
+        function addToCart(idx) {
+            cart.push(products[idx]);
+            updateCartUI();
+            // تأثير بصري بسيط
+            const badge = document.getElementById('cart-badge');
+            badge.style.transform = "scale(1.2)";
+            setTimeout(() => badge.style.transform = "scale(1)", 200);
+        }
 
-        function renderProducts(searchQuery = "") {
-            const grid = document.getElementById('products-grid');
-            let filtered = products;
-            if(currentFilter !== 'all') filtered = filtered.filter(p => p.category === currentFilter);
-            if(searchQuery) filtered = filtered.filter(p => p.name.includes(searchQuery));
-
-            if(filtered.length === 0) grid.innerHTML = `<p class="col-span-full text-center py-10 opacity-50">لا توجد سلع هنا..</p>`;
-            else {
-                grid.innerHTML = filtered.map((p, i) => `
-                    <div class="product-card">
-                        <span class="text-[9px] bg-slate-700 px-2 py-0.5 rounded-full text-amber-500 mb-2 inline-block">${p.category || 'عام'}</span>
-                        <img src="${p.img}" onerror="this.src='https://via.placeholder.com/150?text=TRUST';" class="h-32 mx-auto mb-3 object-contain bg-white rounded p-2">
-                        <h3 class="font-bold text-sm h-10 overflow-hidden">${p.name}</h3>
-                        <p class="text-amber-500 font-bold text-xl my-2">${p.price} د.ج</p>
-                        <button onclick="openOrderModal(${products.indexOf(p)})" class="w-full bg-amber-500 text-black font-bold py-2 rounded-lg text-xs hover:bg-white transition shadow">اطلب الآن</button>
+        function updateCartUI() {
+            document.getElementById('cart-count').innerText = cart.length;
+            const total = cart.reduce((sum, item) => sum + Number(item.price), 0);
+            document.getElementById('cart-total').innerText = total;
+            
+            const list = document.getElementById('cart-items-list');
+            list.innerHTML = cart.map((item, i) => `
+                <div class="flex justify-between items-center bg-slate-800 p-3 rounded-lg border border-slate-700">
+                    <div class="flex items-center gap-3 text-right">
+                        <img src="${item.img}" class="h-10 w-10 object-contain bg-white rounded">
+                        <p class="font-bold text-xs">${item.name}</p>
                     </div>
-                `).join('');
-            }
+                    <button onclick="removeFromCart(${i})" class="text-red-500 text-xs"><i class="fas fa-trash"></i></button>
+                </div>
+            `).join('');
+        }
 
-            document.getElementById('admin-products-list').innerHTML = products.map((p, i) => `
-                <div class="flex justify-between items-center bg-slate-800 p-2 rounded text-[10px] mb-1">
-                    <span class="truncate w-24">${p.name}</span>
-                    <button onclick="deleteProduct(${i})" class="text-red-500"><i class="fas fa-trash"></i></button>
+        function removeFromCart(i) { cart.splice(i, 1); updateCartUI(); }
+        function openCartModal() { if(cart.length === 0) return alert("سلتك فارغة!"); document.getElementById('cart-modal').style.display = 'flex'; }
+        function closeCartModal() { document.getElementById('cart-modal').style.display = 'none'; }
+
+        function submitFinalOrder() {
+            const f = document.getElementById('c-fname').value, l = document.getElementById('c-lname').value, ph = document.getElementById('c-phone').value, w = document.getElementById('c-wilaya').value, c = document.getElementById('c-commune').value;
+            if(!f || !ph || !w || !c) return alert("يرجى ملء جميع البيانات (الاسم، الهاتف، الولاية، البلدية)");
+
+            const orderDetails = {
+                customer: `${f} ${l}`,
+                phone: ph,
+                location: `${w} | ${c}`,
+                items: cart.map(item => item.name).join(' + '),
+                total: document.getElementById('cart-total').innerText,
+                time: new Date().toLocaleString('ar-DZ')
+            };
+
+            orders.unshift(orderDetails);
+            localStorage.setItem('trust_o', JSON.stringify(orders));
+            cart = [];
+            updateCartUI();
+            closeCartModal();
+            alert("تم إرسال طلبك بنجاح!");
+            renderOrders();
+        }
+
+        function renderOrders() {
+            const list = document.getElementById('orders-list');
+            list.innerHTML = orders.map((o, i) => `
+                <div class="bg-slate-800 p-5 rounded-xl border-r-8 border-amber-500 shadow-lg relative">
+                    <button onclick="deleteOrder(${i})" class="absolute left-3 top-3 text-red-500 hover:text-white transition"><i class="fas fa-times-circle text-xl"></i></button>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-amber-500 font-bold text-sm mb-1 uppercase underline italic">السلع المطلوبة:</p>
+                            <p class="text-white text-lg font-extrabold leading-tight mb-2">${o.items}</p>
+                            <p class="text-green-400 font-bold">المجموع: ${o.total} د.ج</p>
+                        </div>
+                        <div class="bg-slate-900 p-3 rounded-lg text-sm border border-slate-700">
+                            <p class="text-amber-400 font-bold mb-1"><i class="fas fa-user ml-2"></i>الزبون: ${o.customer}</p>
+                            <p class="text-white font-bold mb-1"><i class="fas fa-phone ml-2"></i>الهاتف: ${o.phone}</p>
+                            <p class="text-slate-300"><i class="fas fa-map-marker-alt ml-2"></i>العنوان: ${o.location}</p>
+                            <p class="text-[10px] text-slate-500 mt-2">${o.time}</p>
+                        </div>
+                    </div>
                 </div>
             `).join('');
         }
 
         function addNewProduct() {
-            const n = document.getElementById('p-name').value, p = document.getElementById('p-price').value, img = document.getElementById('p-img').value, cat = document.getElementById('p-cat-select').value;
-            if(n && p) { 
-                products.push({name: n, price: p, img: img, category: cat}); 
-                saveAndRefresh();
-                document.getElementById('p-name').value = ''; document.getElementById('p-price').value = ''; document.getElementById('p-img').value = '';
-            }
+            const n = document.getElementById('p-name').value, p = document.getElementById('p-price').value, img = document.getElementById('p-img').value;
+            if(n && p) { products.push({name: n, price: p, img: img}); localStorage.setItem('trust_p', JSON.stringify(products)); renderProducts(); }
         }
-
-        function addNewCategory() {
-            const name = document.getElementById('new-cat-name').value.trim();
-            if(name && !categories.includes(name)) { categories.push(name); saveAndRefresh(); document.getElementById('new-cat-name').value = ''; }
-        }
-
-        function deleteCategory(index) { if(confirm("حذف المجلد؟")) { categories.splice(index, 1); saveAndRefresh(); } }
-        function deleteProduct(index) { if(confirm("حذف السلعة؟")) { products.splice(index, 1); saveAndRefresh(); } }
-        function openOrderModal(idx) { currentItem = products[idx]; document.getElementById('order-form-content').classList.remove('hidden'); document.getElementById('success-screen').classList.add('hidden'); document.getElementById('order-modal').style.display = 'flex'; }
-        function closeModal() { document.getElementById('order-modal').style.display = 'none'; }
-        
-        function accessAdmin() { if(prompt("كلمة سر الإدارة:") === "yacin..yacin.") { document.getElementById('admin-panel').style.display = 'block'; window.scrollTo(0,0); } }
+        function deleteProduct(i) { products.splice(i, 1); localStorage.setItem('trust_p', JSON.stringify(products)); renderProducts(); }
+        function deleteOrder(i) { if(confirm("حذف الطلب؟")) { orders.splice(i, 1); localStorage.setItem('trust_o', JSON.stringify(orders)); renderOrders(); } }
+        function accessAdmin() { if(prompt("كلمة السر:") === "yacin..yacin.") { document.getElementById('admin-panel').style.display = 'block'; window.scrollTo(0,0); } }
         function closeAdmin() { document.getElementById('admin-panel').style.display = 'none'; }
-        
-        function confirmOrderInternally() {
-            const f = document.getElementById('c-fname').value, ph = document.getElementById('c-phone').value, w = document.getElementById('c-wilaya').value, c = document.getElementById('c-commune').value;
-            if(!f || !ph || !w || !c) return alert("املأ الخانات");
-            orders.unshift({customer: f+" "+document.getElementById('c-lname').value, phone: ph, address: w+"-"+c, product: currentItem.name});
-            localStorage.setItem('trust_o', JSON.stringify(orders));
-            document.getElementById('order-form-content').classList.add('hidden'); document.getElementById('success-screen').classList.remove('hidden'); renderOrders();
-        }
 
-        function renderOrders() {
-            document.getElementById('orders-list').innerHTML = orders.map((o, i) => `
-                <div class="bg-slate-800 p-2 rounded border-r-2 border-amber-500 mb-2 text-right">
-                    <p class="text-amber-500 font-bold text-xs">${o.product}</p>
-                    <p class="text-white text-[10px]">${o.customer} | ${o.phone}</p>
-                </div>
-            `).join('');
-        }
-
-        function filterProducts() { renderProducts(document.getElementById('mainSearch').value); }
-        window.onload = renderAll;
+        window.onload = () => { renderProducts(); renderOrders(); updateCartUI(); };
     </script>
 </body>
 </html>
