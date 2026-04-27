@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Amiri:ital@1&display=swap');
         body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: white; }
         .product-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; transition: 0.3s; }
         .product-card:hover { border-color: #f59e0b; transform: translateY(-5px); }
@@ -18,6 +18,9 @@
         .order-input { color: black !important; background: white !important; font-weight: bold; border: 2px solid #334155; padding: 10px; border-radius: 8px; width: 100%; }
         .cat-btn { background: #334155; padding: 8px 15px; border-radius: 20px; font-size: 13px; cursor: pointer; transition: 0.3s; white-space: nowrap; }
         .cat-btn.active { background: #f59e0b; color: black; font-weight: bold; }
+        .delivery-option { background: #1e293b; border: 1px solid #334155; padding: 10px; border-radius: 10px; cursor: pointer; transition: 0.2s; }
+        .delivery-option input:checked + label { color: #f59e0b; }
+        .promise-text { font-family: 'Amiri', serif; line-height: 1.6; border-top: 1px solid #334155; padding-top: 10px; margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -28,19 +31,16 @@
                 <img src="https://scontent.floo1-2.fna.fbcdn.net/v/t39.30808-1/682006759_122095180376344266_5380399349240977356_n.jpg?stp=dst-jpg_s160x160_tt6&_nc_cat=104&ccb=1-7&_nc_sid=1d2534&_nc_ohc=F8ArBc2in4EQ7kNvwE59jEr&_nc_oc=AdqSQL9UW2FqvMmynIS3b37eom0-7urCMfI_exNmQI6jFgPBaGKlTXf6n0n4kbbp_E0&_nc_zt=24&_nc_ht=scontent.floo1-2.fna&_nc_gid=Tn2WacjLMDww-TRhwhXfBA&_nc_ss=7b2a8&oh=00_Af3Zi8oEiwkhfktys-FC-pbJ5jPVQXbpR0mp8Sju-TaCTg&oe=69F59C1A" class="h-12 w-12 rounded-full border border-amber-500">
                 <h1 class="text-xl font-bold text-amber-500">TRUST HARDWARE</h1>
             </div>
-            
             <div class="flex-1 max-w-lg relative w-full">
                 <input type="text" id="mainSearch" onkeyup="filterProducts()" placeholder="ابحث عن أداة (مثلاً: مفك براغي)..." class="w-full bg-slate-800 border border-slate-700 rounded-full py-2 px-10 focus:border-amber-500 outline-none text-white text-center">
                 <i class="fas fa-search absolute right-4 top-3 text-slate-500"></i>
             </div>
-
             <button onclick="accessAdmin()" class="text-slate-500 hover:text-amber-500"><i class="fas fa-user-shield text-2xl"></i></button>
         </div>
     </header>
 
     <div class="container mx-auto px-4 mt-6 overflow-x-auto">
-        <div id="categories-bar" class="flex gap-3 justify-start md:justify-center pb-2">
-            </div>
+        <div id="categories-bar" class="flex gap-3 justify-start md:justify-center pb-2"></div>
     </div>
 
     <section id="admin-panel" class="container mx-auto admin-section shadow-2xl">
@@ -48,7 +48,6 @@
             <h2 class="text-2xl font-bold text-amber-500">لوحة الإدارة والمجلدات</h2>
             <button onclick="closeAdmin()" class="bg-red-600 px-4 py-1 rounded text-sm">إغلاق</button>
         </div>
-        
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div class="space-y-6">
                 <div class="bg-slate-800 p-4 rounded-xl border border-amber-500/30">
@@ -58,7 +57,6 @@
                         <button onclick="addNewCategory()" class="bg-blue-600 px-6 rounded-lg font-bold">إضافة</button>
                     </div>
                 </div>
-
                 <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
                     <p class="text-xs text-amber-400 font-bold mb-2 uppercase">2. نشر سلعة جديدة:</p>
                     <select id="p-cat-select" class="order-input mb-2"></select>
@@ -68,7 +66,6 @@
                     <button onclick="addNewProduct()" class="w-full bg-amber-500 text-black py-3 rounded-lg font-bold">نشر السلعة</button>
                 </div>
             </div>
-
             <div class="bg-slate-900 p-6 rounded-xl border border-slate-700 shadow-inner">
                 <h3 class="text-amber-500 font-bold mb-4 underline">قائمة الطلبات:</h3>
                 <div id="orders-list" class="space-y-4 max-h-[500px] overflow-y-auto pr-2"></div>
@@ -86,9 +83,9 @@
     </div>
 
     <div id="cart-modal" class="modal">
-        <div class="bg-slate-900 border-2 border-amber-500 w-full max-w-xl rounded-3xl p-6 relative mx-4">
+        <div class="bg-slate-900 border-2 border-amber-500 w-full max-w-xl rounded-3xl p-6 relative mx-4 my-8">
             <h2 class="text-xl font-bold text-amber-500 mb-4 text-center">محتويات طلبك</h2>
-            <div id="cart-items-list" class="mb-4 space-y-2 max-h-48 overflow-y-auto border-b border-slate-700 pb-2"></div>
+            <div id="cart-items-list" class="mb-4 space-y-2 max-h-40 overflow-y-auto border-b border-slate-700 pb-2"></div>
             
             <div class="space-y-3">
                 <div class="grid grid-cols-2 gap-2">
@@ -100,7 +97,31 @@
                     <input type="text" id="c-wilaya" placeholder="الولاية" class="order-input">
                     <input type="text" id="c-commune" placeholder="البلدية" class="order-input">
                 </div>
-                <button onclick="submitFinalOrder()" class="w-full bg-green-600 text-white font-bold py-4 rounded-xl text-lg">تأكيد الشراء</button>
+
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div class="delivery-option flex items-center gap-2" onclick="toggleAddressField(false)">
+                        <input type="radio" name="delivery" id="to-office" checked>
+                        <label for="to-office">التوصيل لمكتب الشركة</label>
+                    </div>
+                    <div class="delivery-option flex items-center gap-2" onclick="toggleAddressField(true)">
+                        <input type="radio" name="delivery" id="to-home">
+                        <label for="to-home">التوصيل لِبَاب المنزل</label>
+                    </div>
+                </div>
+
+                <div id="home-address-container" style="display: none;">
+                    <input type="text" id="c-home-address" placeholder="اكتب عنوان منزلك هنا بالتفصيل..." class="order-input">
+                </div>
+
+                <div class="text-center p-3 bg-slate-800 rounded-xl border border-amber-500/20">
+                    <p class="text-green-400 font-bold text-sm mb-1"><i class="fas fa-hand-holding-usd ml-1"></i> الدفع عند الاستلام</p>
+                    <p class="promise-text text-[11px] text-slate-300 italic">
+                        "أعدكم بأنني سوف أستلم الطلبية وأعلم أن عدم استلامي لها يسبب لكم خسائر بسبب مصاريف التوصيل والإرجاع، مستحضرًا قول الله تعالى: {والمُوفُون بعَهْدِهِمْ إذَا عَاهَدُوا}"
+                    </p>
+                    <p class="text-[10px] text-amber-500 mt-2 font-bold underline">نرجو إعلامنا إذا حدث تأخير من شركة التوصيل لأكثر من 3 أيام</p>
+                </div>
+
+                <button onclick="submitFinalOrder()" class="w-full bg-green-600 text-white font-bold py-4 rounded-xl text-lg hover:bg-green-500 transition">تأكيد الشراء</button>
                 <button onclick="closeCartModal()" class="w-full text-slate-500 text-xs mt-1">إلغاء</button>
             </div>
         </div>
@@ -118,6 +139,10 @@
             localStorage.setItem('trust_cats', JSON.stringify(categories));
             localStorage.setItem('trust_o', JSON.stringify(orders));
             renderAll();
+        }
+
+        function toggleAddressField(show) {
+            document.getElementById('home-address-container').style.display = show ? 'block' : 'none';
         }
 
         function renderAll() {
@@ -144,28 +169,22 @@
         function renderProducts(searchQuery = "") {
             const grid = document.getElementById('products-grid');
             let filtered = products;
-            
             if(currentFilter !== 'all') filtered = filtered.filter(p => p.category === currentFilter);
             if(searchQuery) filtered = filtered.filter(p => p.name.toLowerCase().includes(searchQuery));
 
-            if(filtered.length === 0) grid.innerHTML = `<p class="col-span-full text-center py-20 opacity-50">لا توجد نتائج بحث..</p>`;
-            else {
-                grid.innerHTML = filtered.map((p, i) => `
+            grid.innerHTML = filtered.length === 0 ? `<p class="col-span-full text-center py-20 opacity-50">لا توجد نتائج..</p>` : 
+                filtered.map((p, i) => `
                     <div class="product-card p-4 text-center">
                         <span class="text-[9px] text-amber-500 block mb-1 uppercase">${p.category || 'عام'}</span>
-                        <img src="${p.img}" onerror="this.src='https://via.placeholder.com/150?text=TRUST';" class="h-32 mx-auto mb-3 object-contain bg-white rounded p-2">
+                        <img src="${p.img}" class="h-32 mx-auto mb-3 object-contain bg-white rounded p-2">
                         <h3 class="font-bold text-sm h-10 overflow-hidden">${p.name}</h3>
                         <p class="text-amber-500 font-bold text-lg my-2">${p.price} د.ج</p>
                         <button onclick="addToCart(${products.indexOf(p)})" class="w-full bg-amber-500 text-black font-bold py-2 rounded-lg text-xs"><i class="fas fa-plus ml-1"></i> أضف للسلة</button>
                     </div>
                 `).join('');
-            }
         }
 
-        function addToCart(idx) {
-            cart.push(products[idx]);
-            updateCartUI();
-        }
+        function addToCart(idx) { cart.push(products[idx]); updateCartUI(); }
 
         function updateCartUI() {
             document.getElementById('cart-count').innerText = cart.length;
@@ -185,9 +204,25 @@
 
         function submitFinalOrder() {
             const f = document.getElementById('c-fname').value, ph = document.getElementById('c-phone').value, w = document.getElementById('c-wilaya').value, c = document.getElementById('c-commune').value;
-            if(!f || !ph || !w || !c) return alert("أكمل البيانات");
-            orders.unshift({customer: f+" "+document.getElementById('c-lname').value, phone: ph, address: w+" | "+c, items: cart.map(i=>i.name).join(' + '), total: document.getElementById('cart-total').innerText, time: new Date().toLocaleString('ar-DZ')});
+            const isHome = document.getElementById('to-home').checked;
+            const homeAddress = document.getElementById('c-home-address').value;
+
+            if(!f || !ph || !w || !c) return alert("يرجى ملء البيانات الأساسية");
+            if(isHome && !homeAddress) return alert("يرجى كتابة عنوان المنزل");
+
+            const deliveryType = isHome ? "توصيل للبيت: " + homeAddress : "توصيل لمكتب الشركة";
+
+            orders.unshift({
+                customer: f+" "+document.getElementById('c-lname').value,
+                phone: ph,
+                address: w+" | "+c,
+                delivery: deliveryType,
+                items: cart.map(i=>i.name).join(' + '),
+                total: document.getElementById('cart-total').innerText,
+                time: new Date().toLocaleString('ar-DZ')
+            });
             cart = []; updateCartUI(); closeCartModal(); saveAll();
+            alert("تم إرسال طلبك بنجاح!");
         }
 
         function renderOrders() {
@@ -197,6 +232,7 @@
                     <p class="text-amber-500 font-bold text-xs underline mb-1">السلع: ${o.items}</p>
                     <p class="text-white text-sm font-bold">الزبون: ${o.customer} (${o.phone})</p>
                     <p class="text-slate-400 text-[11px]">العنوان: ${o.address}</p>
+                    <p class="text-blue-400 text-[11px] font-bold">نوع التوصيل: ${o.delivery}</p>
                     <p class="text-green-400 font-bold text-xs mt-1">المجموع: ${o.total} د.ج</p>
                 </div>
             `).join('');
