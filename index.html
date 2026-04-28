@@ -260,7 +260,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
 <script>
-  // ضع كود الإعداد الخاص بك هنا (من الصورة التي أرفقتها)
+  // 2. كود الإعداد الخاص بك (تم استخراجه من صورتك الأخيرة)
   const firebaseConfig = {
     apiKey: "AIzaSyBDxdhBktG-DanMbZq8k7cVg7bgY3NnQkk",
     authDomain: "trust-hardware.firebaseapp.com",
@@ -271,11 +271,11 @@
     appId: "1:801438773757:web:85c57fcfdd13c0eaf3a994"
   };
 
-  // بدء تشغيل Firebase
+  // 3. تفعيل الاتصال
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
-  // تعديل وظيفة إرسال الطلب لتعمل مع Firebase
+  // 4. دالة إرسال الطلب المحدثة لترسل البيانات إلى السحاب
   function submitFinalOrder() {
       const f = document.getElementById('c-fname').value, 
             ph = document.getElementById('c-phone').value, 
@@ -289,7 +289,7 @@
 
       const deliveryType = isHome ? "توصيل للبيت: " + homeAddress : "توصيل لمكتب الشركة";
 
-      // إرسال البيانات إلى Firebase
+      // إرسال البيانات إلى Firebase لضمان وصولها لكل الأجهزة
       const newOrderRef = db.ref('orders').push();
       newOrderRef.set({
           customer: f + " " + document.getElementById('c-lname').value,
@@ -303,18 +303,36 @@
           cart = []; 
           updateCartUI(); 
           closeCartModal();
-          alert("تم إرسال طلبك بنجاح وسيظهر على جميع الأجهزة!");
+          alert("تم إرسال طلبك بنجاح! سيظهر الآن على الكمبيوتر والهاتف فوراً.");
+      }).catch((error) => {
+          console.error("خطأ في الإرسال: ", error);
+          alert("حدث خطأ، تأكد من إعدادات Realtime Database");
       });
   }
 
-  // وظيفة جلب الطلبات وعرضها في لوحة الإدارة تلقائياً
+  // 5. وظيفة جلب الطلبات وعرضها تلقائياً عند حدوث أي تغيير
   db.ref('orders').on('value', (snapshot) => {
       const ordersData = snapshot.val();
       const ordersList = [];
       for (let id in ordersData) {
-          ordersList.unshift(ordersData[id]);
+          ordersList.unshift(ordersData[id]); // نضع الطلبات الجديدة في الأعلى
       }
-      // تحديث واجهة الطلبات في المتصفح
+      // استدعاء دالة الرسم لتحديث واجهة "قائمة الطلبات"
       renderOrdersFromFirebase(ordersList);
   });
+
+  function renderOrdersFromFirebase(ordersArray) {
+      const listDiv = document.getElementById('orders-list');
+      if(!listDiv) return;
+      listDiv.innerHTML = ordersArray.map((o) => `
+          <div class="bg-slate-800 p-4 rounded-xl border-r-4 border-amber-500 relative mb-4">
+              <p class="text-amber-500 font-bold text-xs underline mb-1">السلع: ${o.items}</p>
+              <p class="text-white text-sm font-bold">الزبون: ${o.customer} (${o.phone})</p>
+              <p class="text-slate-400 text-[11px]">العنوان: ${o.address}</p>
+              <p class="text-blue-400 text-[11px] font-bold">نوع التوصيل: ${o.delivery}</p>
+              <p class="text-green-400 font-bold text-xs mt-1">المجموع: ${o.total} د.ج</p>
+              <p class="text-slate-500 text-[9px] text-left">${o.time}</p>
+          </div>
+      `).join('');
+  }
 </script>
