@@ -5,8 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TRUST HARDWARE | ثقة وضمان</title>
     <link rel="icon" type="image/jpg" href="https://scontent.floo1-2.fna.fbcdn.net/v/t39.30808-1/682006759_122095180376344266_5380399349240977356_n.jpg?stp=dst-jpg_s160x160_tt6&_nc_cat=104&ccb=1-7&_nc_sid=1d2534&_nc_ohc=F8ArBc2in4EQ7kNvwE59jEr&_nc_oc=AdqSQL9UW2FqvMmynIS3b37eom0-7urCMfI_exNmQI6jFgPBaGKlTXf6n0n4kbbp_E0&_nc_zt=24&_nc_ht=scontent.floo1-2.fna&_nc_gid=Tn2WacjLMDww-TRhwhXfBA&_nc_ss=7b2a8&oh=00_Af3Zi8oEiwkhfktys-FC-pbJ5jPVQXbpR0mp8Sju-TaCTg&oe=69F59C1A">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Amiri:ital@1&display=swap');
         body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: white; }
@@ -67,7 +72,7 @@
                 </div>
             </div>
             <div class="bg-slate-900 p-6 rounded-xl border border-slate-700 shadow-inner">
-                <h3 class="text-amber-500 font-bold mb-4 underline">قائمة الطلبات:</h3>
+                <h3 class="text-amber-500 font-bold mb-4 underline">قائمة الطلبات السحابية:</h3>
                 <div id="orders-list" class="space-y-4 max-h-[500px] overflow-y-auto pr-2"></div>
             </div>
         </div>
@@ -128,16 +133,28 @@
     </div>
 
     <script>
+        // إعدادات Firebase الخاصة بك
+        const firebaseConfig = {
+            apiKey: "AIzaSyBDxdhBktG-DanMbZq8k7cVg7bgY3NnQkk",
+            authDomain: "trust-hardware.firebaseapp.com",
+            databaseURL: "https://trust-hardware-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "trust-hardware",
+            storageBucket: "trust-hardware.firebasestorage.app",
+            messagingSenderId: "801438773757",
+            appId: "1:801438773757:web:85c57fcfdd13c0eaf3a994"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
         let products = JSON.parse(localStorage.getItem('trust_p')) || [];
         let categories = JSON.parse(localStorage.getItem('trust_cats')) || ["أدوات يدوية", "كهرباء"];
-        let orders = JSON.parse(localStorage.getItem('trust_o')) || [];
         let cart = [];
         let currentFilter = 'all';
 
-        function saveAll() {
+        function saveLocalData() {
             localStorage.setItem('trust_p', JSON.stringify(products));
             localStorage.setItem('trust_cats', JSON.stringify(categories));
-            localStorage.setItem('trust_o', JSON.stringify(orders));
             renderAll();
         }
 
@@ -148,7 +165,6 @@
         function renderAll() {
             renderCategories();
             renderProducts();
-            renderOrders();
             const select = document.getElementById('p-cat-select');
             select.innerHTML = `<option value="all">بدون مجلد</option>` + categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
         }
@@ -202,6 +218,7 @@
         function openCartModal() { if(cart.length > 0) document.getElementById('cart-modal').style.display = 'flex'; }
         function closeCartModal() { document.getElementById('cart-modal').style.display = 'none'; }
 
+        // إرسال الطلب إلى Firebase
         function submitFinalOrder() {
             const f = document.getElementById('c-fname').value, ph = document.getElementById('c-phone').value, w = document.getElementById('c-wilaya').value, c = document.getElementById('c-commune').value;
             const isHome = document.getElementById('to-home').checked;
@@ -212,43 +229,57 @@
 
             const deliveryType = isHome ? "توصيل للبيت: " + homeAddress : "توصيل لمكتب الشركة";
 
-            orders.unshift({
-                customer: f+" "+document.getElementById('c-lname').value,
+            const newOrderRef = db.ref('orders').push();
+            newOrderRef.set({
+                customer: f + " " + document.getElementById('c-lname').value,
                 phone: ph,
-                address: w+" | "+c,
+                address: w + " | " + c,
                 delivery: deliveryType,
-                items: cart.map(i=>i.name).join(' + '),
+                items: cart.map(i => i.name).join(' + '),
                 total: document.getElementById('cart-total').innerText,
                 time: new Date().toLocaleString('ar-DZ')
+            }).then(() => {
+                cart = []; updateCartUI(); closeCartModal();
+                alert("تم إرسال طلبك بنجاح وسيظهر على جميع الأجهزة!");
             });
-            cart = []; updateCartUI(); closeCartModal(); saveAll();
-            alert("تم إرسال طلبك بنجاح!");
         }
 
-        function renderOrders() {
-            document.getElementById('orders-list').innerHTML = orders.map((o, i) => `
-                <div class="bg-slate-800 p-4 rounded-xl border-r-4 border-amber-500 relative mb-4">
-                    <button onclick="deleteOrder(${i})" class="absolute left-2 top-2 text-red-500"><i class="fas fa-trash"></i></button>
-                    <p class="text-amber-500 font-bold text-xs underline mb-1">السلع: ${o.items}</p>
-                    <p class="text-white text-sm font-bold">الزبون: ${o.customer} (${o.phone})</p>
-                    <p class="text-slate-400 text-[11px]">العنوان: ${o.address}</p>
-                    <p class="text-blue-400 text-[11px] font-bold">نوع التوصيل: ${o.delivery}</p>
-                    <p class="text-green-400 font-bold text-xs mt-1">المجموع: ${o.total} د.ج</p>
-                </div>
-            `).join('');
-        }
+        // جلب وعرض الطلبات من Firebase تلقائياً
+        db.ref('orders').on('value', (snapshot) => {
+            const ordersData = snapshot.val();
+            const listDiv = document.getElementById('orders-list');
+            if(!listDiv) return;
+            
+            let html = "";
+            for (let id in ordersData) {
+                const o = ordersData[id];
+                html = `
+                    <div class="bg-slate-800 p-4 rounded-xl border-r-4 border-amber-500 relative mb-4">
+                        <button onclick="deleteOrderFirebase('${id}')" class="absolute left-2 top-2 text-red-500"><i class="fas fa-trash"></i></button>
+                        <p class="text-amber-500 font-bold text-xs underline mb-1">السلع: ${o.items}</p>
+                        <p class="text-white text-sm font-bold">الزبون: ${o.customer} (${o.phone})</p>
+                        <p class="text-slate-400 text-[11px]">العنوان: ${o.address}</p>
+                        <p class="text-blue-400 text-[11px] font-bold">نوع التوصيل: ${o.delivery}</p>
+                        <p class="text-green-400 font-bold text-xs mt-1">المجموع: ${o.total} د.ج</p>
+                        <p class="text-slate-500 text-[9px] text-left">${o.time}</p>
+                    </div>
+                ` + html;
+            }
+            listDiv.innerHTML = html || `<p class="text-center opacity-50">لا توجد طلبات بعد..</p>`;
+        });
+
+        function deleteOrderFirebase(id) { if(confirm("حذف الطلب نهائياً من السحاب؟")) db.ref('orders/' + id).remove(); }
 
         function addNewCategory() {
             const name = document.getElementById('new-cat-name').value;
-            if(name) { categories.push(name); document.getElementById('new-cat-name').value = ''; saveAll(); }
+            if(name) { categories.push(name); document.getElementById('new-cat-name').value = ''; saveLocalData(); }
         }
 
         function addNewProduct() {
             const n = document.getElementById('p-name').value, p = document.getElementById('p-price').value, img = document.getElementById('p-img').value, cat = document.getElementById('p-cat-select').value;
-            if(n && p) { products.push({name: n, price: p, img: img, category: cat}); saveAll(); }
+            if(n && p) { products.push({name: n, price: p, img: img, category: cat}); saveLocalData(); }
         }
 
-        function deleteOrder(i) { if(confirm("حذف؟")) { orders.splice(i, 1); saveAll(); } }
         function accessAdmin() { if(prompt("السر:") === "yacin..yacin.") document.getElementById('admin-panel').style.display = 'block'; }
         function closeAdmin() { document.getElementById('admin-panel').style.display = 'none'; }
 
@@ -256,83 +287,3 @@
     </script>
 </body>
 </html>
-<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-
-<script>
-  // 2. كود الإعداد الخاص بك (تم استخراجه من صورتك الأخيرة)
-  const firebaseConfig = {
-    apiKey: "AIzaSyBDxdhBktG-DanMbZq8k7cVg7bgY3NnQkk",
-    authDomain: "trust-hardware.firebaseapp.com",
-    databaseURL: "https://trust-hardware-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "trust-hardware",
-    storageBucket: "trust-hardware.firebasestorage.app",
-    messagingSenderId: "801438773757",
-    appId: "1:801438773757:web:85c57fcfdd13c0eaf3a994"
-  };
-
-  // 3. تفعيل الاتصال
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-
-  // 4. دالة إرسال الطلب المحدثة لترسل البيانات إلى السحاب
-  function submitFinalOrder() {
-      const f = document.getElementById('c-fname').value, 
-            ph = document.getElementById('c-phone').value, 
-            w = document.getElementById('c-wilaya').value, 
-            c = document.getElementById('c-commune').value;
-      const isHome = document.getElementById('to-home').checked;
-      const homeAddress = document.getElementById('c-home-address').value;
-
-      if(!f || !ph || !w || !c) return alert("يرجى ملء البيانات الأساسية");
-      if(isHome && !homeAddress) return alert("يرجى كتابة عنوان المنزل");
-
-      const deliveryType = isHome ? "توصيل للبيت: " + homeAddress : "توصيل لمكتب الشركة";
-
-      // إرسال البيانات إلى Firebase لضمان وصولها لكل الأجهزة
-      const newOrderRef = db.ref('orders').push();
-      newOrderRef.set({
-          customer: f + " " + document.getElementById('c-lname').value,
-          phone: ph,
-          address: w + " | " + c,
-          delivery: deliveryType,
-          items: cart.map(i => i.name).join(' + '),
-          total: document.getElementById('cart-total').innerText,
-          time: new Date().toLocaleString('ar-DZ')
-      }).then(() => {
-          cart = []; 
-          updateCartUI(); 
-          closeCartModal();
-          alert("تم إرسال طلبك بنجاح! سيظهر الآن على الكمبيوتر والهاتف فوراً.");
-      }).catch((error) => {
-          console.error("خطأ في الإرسال: ", error);
-          alert("حدث خطأ، تأكد من إعدادات Realtime Database");
-      });
-  }
-
-  // 5. وظيفة جلب الطلبات وعرضها تلقائياً عند حدوث أي تغيير
-  db.ref('orders').on('value', (snapshot) => {
-      const ordersData = snapshot.val();
-      const ordersList = [];
-      for (let id in ordersData) {
-          ordersList.unshift(ordersData[id]); // نضع الطلبات الجديدة في الأعلى
-      }
-      // استدعاء دالة الرسم لتحديث واجهة "قائمة الطلبات"
-      renderOrdersFromFirebase(ordersList);
-  });
-
-  function renderOrdersFromFirebase(ordersArray) {
-      const listDiv = document.getElementById('orders-list');
-      if(!listDiv) return;
-      listDiv.innerHTML = ordersArray.map((o) => `
-          <div class="bg-slate-800 p-4 rounded-xl border-r-4 border-amber-500 relative mb-4">
-              <p class="text-amber-500 font-bold text-xs underline mb-1">السلع: ${o.items}</p>
-              <p class="text-white text-sm font-bold">الزبون: ${o.customer} (${o.phone})</p>
-              <p class="text-slate-400 text-[11px]">العنوان: ${o.address}</p>
-              <p class="text-blue-400 text-[11px] font-bold">نوع التوصيل: ${o.delivery}</p>
-              <p class="text-green-400 font-bold text-xs mt-1">المجموع: ${o.total} د.ج</p>
-              <p class="text-slate-500 text-[9px] text-left">${o.time}</p>
-          </div>
-      `).join('');
-  }
-</script>
