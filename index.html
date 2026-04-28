@@ -256,3 +256,65 @@
     </script>
 </body>
 </html>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+<script>
+  // ضع كود الإعداد الخاص بك هنا (من الصورة التي أرفقتها)
+  const firebaseConfig = {
+    apiKey: "AIzaSyBDxdhBktG-DanMbZq8k7cVg7bgY3NnQkk",
+    authDomain: "trust-hardware.firebaseapp.com",
+    databaseURL: "https://trust-hardware-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "trust-hardware",
+    storageBucket: "trust-hardware.firebasestorage.app",
+    messagingSenderId: "801438773757",
+    appId: "1:801438773757:web:85c57fcfdd13c0eaf3a994"
+  };
+
+  // بدء تشغيل Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  // تعديل وظيفة إرسال الطلب لتعمل مع Firebase
+  function submitFinalOrder() {
+      const f = document.getElementById('c-fname').value, 
+            ph = document.getElementById('c-phone').value, 
+            w = document.getElementById('c-wilaya').value, 
+            c = document.getElementById('c-commune').value;
+      const isHome = document.getElementById('to-home').checked;
+      const homeAddress = document.getElementById('c-home-address').value;
+
+      if(!f || !ph || !w || !c) return alert("يرجى ملء البيانات الأساسية");
+      if(isHome && !homeAddress) return alert("يرجى كتابة عنوان المنزل");
+
+      const deliveryType = isHome ? "توصيل للبيت: " + homeAddress : "توصيل لمكتب الشركة";
+
+      // إرسال البيانات إلى Firebase
+      const newOrderRef = db.ref('orders').push();
+      newOrderRef.set({
+          customer: f + " " + document.getElementById('c-lname').value,
+          phone: ph,
+          address: w + " | " + c,
+          delivery: deliveryType,
+          items: cart.map(i => i.name).join(' + '),
+          total: document.getElementById('cart-total').innerText,
+          time: new Date().toLocaleString('ar-DZ')
+      }).then(() => {
+          cart = []; 
+          updateCartUI(); 
+          closeCartModal();
+          alert("تم إرسال طلبك بنجاح وسيظهر على جميع الأجهزة!");
+      });
+  }
+
+  // وظيفة جلب الطلبات وعرضها في لوحة الإدارة تلقائياً
+  db.ref('orders').on('value', (snapshot) => {
+      const ordersData = snapshot.val();
+      const ordersList = [];
+      for (let id in ordersData) {
+          ordersList.unshift(ordersData[id]);
+      }
+      // تحديث واجهة الطلبات في المتصفح
+      renderOrdersFromFirebase(ordersList);
+  });
+</script>
