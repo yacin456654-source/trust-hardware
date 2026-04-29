@@ -3,114 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TRUST HARDWARE DJELFA</title>
-    <!-- المكاتب -->
+    <title>TRUST HARDWARE DJELFA | ثقة وضمان</title>
+    
+    <!-- اللوجو في علامة التبويب (Favicon) -->
+    <link rel="icon" type="image/jpg" href="https://scontent.floo1-2.fna.fbcdn.net/v/t39.30808-1/682006759_122095180376344266_5380399349240977356_n.jpg?stp=dst-jpg_s160x160_tt6&_nc_cat=104&ccb=1-7&_nc_sid=1d2534&_nc_ohc=F8ArBc2in4EQ7kNvwE59jEr&_nc_oc=AdqSQL9UW2FqvMmynIS3b37eom0-7urCMfI_exNmQI6jFgPBaGKlTXf6n0n4kbbp_E0&_nc_zt=24&_nc_ht=scontent.floo1-2.fna&_nc_gid=Tn2WacjLMDww-TRhwhXfBA&_nc_ss=7b2a8&oh=00_Af3Zi8oEiwkhfktys-FC-pbJ5jPVQXbpR0mp8Sju-TaCTg&oe=69F59C1A">
+    
+    <!-- المكاتب اللازمة -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
         body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: white; }
-        .order-input { color: #000 !important; background: #fff !important; width: 100%; padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 2px solid #ccc; }
-        .admin-section { display: none; background: #1e293b; padding: 20px; border-radius: 15px; border: 2px solid #f59e0b; margin: 20px; }
+        
+        /* جعل المنتجات 4 في السطر في الشاشات الكبيرة و 2 في الموبايل */
+        .product-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 20px; 
+        }
+        @media (min-width: 768px) {
+            .product-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        .product-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; transition: 0.3s; padding: 15px; text-align: center; }
+        .product-card:hover { border-color: #f59e0b; }
+        
+        .order-input { color: black !important; background: white !important; font-weight: bold; border: 2px solid #334155; padding: 10px; border-radius: 8px; width: 100%; margin-bottom: 10px; }
+        .admin-section { display: none; background: #1e293b; padding: 25px; border-radius: 15px; border: 2px solid #f59e0b; margin: 20px auto; max-width: 1200px; }
+        
         #cropper-wrapper { display: none; margin: 15px 0; background: #000; border-radius: 8px; overflow: hidden; }
         #image-to-crop { max-width: 100%; display: block; }
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
-        .cat-btn { background: #334155; padding: 8px 15px; border-radius: 20px; cursor: pointer; white-space: nowrap; }
-        .cat-btn.active { background: #f59e0b; color: #000; }
+        
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; }
+        .cat-btn { background: #334155; padding: 8px 18px; border-radius: 20px; cursor: pointer; white-space: nowrap; }
+        .cat-btn.active { background: #f59e0b; color: black; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <!-- الهيدر -->
-    <header class="bg-slate-900 border-b border-amber-500 p-4 sticky top-0 z-50 shadow-lg">
-        <div class="container mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <img src="https://scontent.floo1-2.fna.fbcdn.net/v/t39.30808-1/682006759_122095180376344266_5380399349240977356_n.jpg?stp=dst-jpg_s160x160_tt6&_nc_cat=104&ccb=1-7&_nc_sid=1d2534&_nc_ohc=F8ArBc2in4EQ7kNvwE59jEr&_nc_oc=AdqSQL9UW2FqvMmynIS3b37eom0-7urCMfI_exNmQI6jFgPBaGKlTXf6n0n4kbbp_E0&_nc_zt=24&_nc_ht=scontent.floo1-2.fna&_nc_gid=Tn2WacjLMDww-TRhwhXfBA&_nc_ss=7b2a8&oh=00_Af3Zi8oEiwkhfktys-FC-pbJ5jPVQXbpR0mp8Sju-TaCTg&oe=69F59C1A" class="h-10 w-10 rounded-full border border-amber-500">
-                <h1 class="text-amber-500 font-bold uppercase hidden md:block">TRUST HARDWARE DJELFA</h1>
+    <!-- الهيدر المطور -->
+    <header class="bg-slate-900 border-b border-amber-500 sticky top-0 z-50 p-4 shadow-xl">
+        <div class="container mx-auto">
+            <!-- الجزء العلوي: اللوجو ومعلومات التواصل -->
+            <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+                <div class="flex items-center gap-3">
+                    <img src="https://scontent.floo1-2.fna.fbcdn.net/v/t39.30808-1/682006759_122095180376344266_5380399349240977356_n.jpg?stp=dst-jpg_s160x160_tt6&_nc_cat=104&ccb=1-7&_nc_sid=1d2534&_nc_ohc=F8ArBc2in4EQ7kNvwE59jEr&_nc_oc=AdqSQL9UW2FqvMmynIS3b37eom0-7urCMfI_exNmQI6jFgPBaGKlTXf6n0n4kbbp_E0&_nc_zt=24&_nc_ht=scontent.floo1-2.fna&_nc_gid=Tn2WacjLMDww-TRhwhXfBA&_nc_ss=7b2a8&oh=00_Af3Zi8oEiwkhfktys-FC-pbJ5jPVQXbpR0mp8Sju-TaCTg&oe=69F59C1A" class="h-14 w-14 rounded-full border-2 border-amber-500 shadow-lg">
+                    <div>
+                        <h1 class="text-xl font-bold text-amber-500 leading-none">TRUST HARDWARE</h1>
+                        <div class="flex gap-4 mt-2 text-xs text-slate-300">
+                            <a href="https://www.facebook.com/profile.php?id=61560327990792" target="_blank" class="hover:text-amber-500"><i class="fab fa-facebook text-amber-500"></i> Facebook</a>
+                            <span><i class="fas fa-phone text-amber-500"></i> 0659992619</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- مكان البحث في الوسط -->
+                <div class="flex-1 max-w-md relative">
+                    <input type="text" id="mainSearch" onkeyup="renderProducts()" placeholder="ابحث عن المنتجات هنا..." class="w-full bg-slate-800 border border-slate-700 rounded-full py-2 px-10 focus:border-amber-500 outline-none text-center">
+                    <i class="fas fa-search absolute right-4 top-3 text-slate-500"></i>
+                </div>
+
+                <!-- زر الإدارة المخفي -->
+                <div onclick="handleSecretClick()" class="w-10 h-10 bg-amber-500 rounded opacity-0 cursor-pointer"></div>
             </div>
-            <div onclick="handleSecretClick()" class="w-8 h-8 opacity-5 cursor-pointer bg-amber-500 rounded"></div>
-            <input type="text" id="mainSearch" onkeyup="renderProducts()" placeholder="ابحث هنا..." class="bg-slate-800 border border-slate-700 rounded-full px-4 py-1 text-sm text-center focus:outline-none">
         </div>
     </header>
 
     <!-- شريط المجلدات -->
-    <div id="categories-bar" class="flex gap-2 p-4 overflow-x-auto justify-center"></div>
+    <div id="categories-bar" class="flex gap-3 p-4 overflow-x-auto justify-center bg-slate-800/50"></div>
 
     <!-- لوحة التحكم -->
     <section id="admin-panel" class="admin-section">
-        <div class="flex justify-between mb-4">
-            <h2 class="text-xl font-bold text-amber-500 italic underline">لوحة التحكم الإدارية</h2>
-            <button onclick="closeAdmin()" class="bg-red-600 px-3 py-1 rounded text-xs">إغلاق</button>
+        <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-3">
+            <h2 class="text-2xl font-bold text-amber-500">لوحة الإدارة</h2>
+            <button onclick="closeAdmin()" class="bg-red-600 px-4 py-1 rounded">إغلاق</button>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-6">
-            <!-- إضافة منتج -->
-            <div class="bg-slate-800 p-4 rounded-lg">
-                <h3 id="form-title" class="text-sm font-bold text-amber-400 mb-3">إضافة سلعة جديدة:</h3>
-                <div id="cat-checkboxes" class="flex flex-wrap gap-2 mb-3 bg-slate-900 p-2 rounded border border-slate-700"></div>
+        <div class="grid lg:grid-cols-2 gap-8">
+            <!-- فورم المنتج -->
+            <div class="bg-slate-800 p-5 rounded-xl border border-slate-700">
+                <h3 id="form-title" class="font-bold text-amber-400 mb-4">إضافة/تعديل منتج:</h3>
+                <div id="cat-checkboxes" class="flex flex-wrap gap-2 mb-4 bg-slate-900 p-3 rounded"></div>
                 
-                <input type="text" id="p-name" placeholder="اسم السلعة" class="order-input">
-                <input type="number" id="p-price" placeholder="السعر" class="order-input">
-                <input type="text" id="p-img" onchange="startCropping(this.value)" placeholder="رابط الصورة (سيفتح القص تلقائياً)" class="order-input">
+                <input type="text" id="p-name" placeholder="اسم المنتج" class="order-input">
+                <input type="number" id="p-price" placeholder="السعر (د.ج)" class="order-input">
+                <!-- عند التعديل سيظهر الرابط هنا ولن يظهر كلمة صورة مخزنة -->
+                <input type="text" id="p-img" onchange="startCropping(this.value)" placeholder="رابط الصورة" class="order-input">
                 
-                <!-- منطقة القص -->
                 <div id="cropper-wrapper">
-                    <p class="text-[10px] text-center text-amber-500 mb-1">قم بتحريك الصورة لضبط القياس المربع</p>
                     <img id="image-to-crop">
-                    <button onclick="confirmCrop()" class="w-full bg-green-600 py-2 text-white font-bold mt-2">تأكيد القص</button>
+                    <button onclick="confirmCrop()" class="w-full bg-green-600 py-3 font-bold mt-2">تأكيد القص</button>
                 </div>
 
                 <input type="hidden" id="edit-product-id">
                 <input type="hidden" id="cropped-image-data">
 
-                <button id="submit-btn" onclick="saveProduct()" class="w-full bg-amber-500 text-black font-bold py-3 rounded mt-2">حفظ ونشر</button>
-                <button id="cancel-edit" onclick="resetForm()" class="hidden w-full bg-slate-600 py-2 mt-2 rounded">إلغاء التعديل</button>
+                <button id="submit-btn" onclick="saveProduct()" class="w-full bg-amber-500 text-black font-bold py-3 rounded-lg mt-3">حفظ المنتج</button>
+                <button id="cancel-edit" onclick="resetForm()" class="hidden w-full bg-slate-600 py-2 mt-2 rounded">إلغاء</button>
             </div>
 
-            <!-- الطلبات الواردة -->
-            <div class="bg-slate-900 p-4 rounded-lg">
-                <h3 class="text-amber-500 font-bold mb-3 border-b border-slate-700 pb-2">الطلبات الواردة من الزبائن:</h3>
-                <div id="orders-list" class="space-y-3 max-h-[400px] overflow-y-auto"></div>
+            <!-- الطلبات (تم إصلاح الـ undefined) -->
+            <div class="bg-slate-900 p-5 rounded-xl">
+                <h3 class="text-amber-500 font-bold mb-4 italic underline">الطلبات الواردة من الزبائن:</h3>
+                <div id="orders-list" class="space-y-4 max-h-[500px] overflow-y-auto"></div>
             </div>
         </div>
 
-        <!-- إدارة المنتجات الحالية -->
-        <div class="mt-6">
-            <h3 class="text-amber-500 font-bold mb-2">تعديل/حذف المنتجات الحالية:</h3>
-            <div id="admin-products-list" class="grid grid-cols-2 md:grid-cols-5 gap-2"></div>
+        <div class="mt-8">
+            <h3 class="text-amber-500 font-bold mb-4">المنتجات المنشورة حالياً:</h3>
+            <div id="admin-products-list" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3"></div>
         </div>
     </section>
 
-    <!-- عرض المنتجات -->
-    <main class="container mx-auto p-4">
-        <div id="products-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
+    <!-- واجهة الزبون -->
+    <main class="container mx-auto p-4 mt-6">
+        <div id="products-grid" class="product-grid"></div>
     </main>
 
     <!-- سلة التسوق -->
-    <div id="cart-badge" class="fixed bottom-5 left-5 bg-amber-500 text-black px-5 py-3 rounded-full font-bold cursor-pointer shadow-2xl z-50" onclick="toggleCart()">
-        <i class="fas fa-shopping-basket ml-2"></i> <span id="cart-count">0</span> سلعة
+    <div id="cart-badge" class="fixed bottom-6 left-6 bg-amber-500 text-black px-6 py-4 rounded-full font-bold cursor-pointer shadow-2xl z-50 flex items-center gap-2" onclick="toggleCart()">
+        <i class="fas fa-shopping-cart"></i>
+        <span id="cart-count">0</span> | <span id="cart-total">0</span> د.ج
     </div>
 
     <!-- مودال السلة -->
     <div id="cart-modal" class="modal">
-        <div class="bg-slate-800 p-6 rounded-xl w-80">
-            <h2 class="text-amber-500 font-bold mb-4">تأكيد الطلبية</h2>
-            <div id="cart-items" class="text-xs space-y-2 mb-4 max-h-40 overflow-y-auto"></div>
+        <div class="bg-slate-800 p-8 rounded-2xl w-full max-w-md border border-amber-500">
+            <h2 class="text-2xl font-bold text-amber-500 mb-4 text-center">إتمام الطلب</h2>
+            <div id="cart-items" class="mb-4 space-y-2 max-h-40 overflow-y-auto bg-slate-900 p-3 rounded"></div>
             <input type="text" id="cust-name" placeholder="اسمك الكامل" class="order-input">
-            <input type="text" id="cust-phone" placeholder="رقم هاتفك" class="order-input">
-            <p class="text-center font-bold text-amber-500 mb-4">الإجمالي: <span id="cart-total">0</span> د.ج</p>
-            <button onclick="sendOrder()" class="w-full bg-green-600 py-2 rounded font-bold">إرسال الطلب</button>
-            <button onclick="toggleCart()" class="w-full mt-2 text-slate-400 text-sm">إلغاء</button>
+            <input type="text" id="cust-phone" placeholder="رقم الهاتف" class="order-input">
+            <button onclick="sendOrder()" class="w-full bg-green-600 py-4 rounded-xl font-bold text-lg mt-2">إرسال الطلبية الآن</button>
+            <button onclick="toggleCart()" class="w-full mt-4 text-slate-400">إغلاق</button>
         </div>
     </div>
 
     <script>
-        // تكوين Firebase
+        // إعدادات Firebase (نفس إعداداتك)
         const firebaseConfig = {
             apiKey: "AIzaSyBDxdhBktG-DanMbZq8k7cVg7bgY3NnQkk",
             authDomain: "trust-hardware.firebaseapp.com",
@@ -127,24 +161,22 @@
 
         // نظام القص
         function startCropping(url) {
-            if (!url || url === "صورة مخزنة") return;
+            if (!url) return;
             document.getElementById('cropper-wrapper').style.display = 'block';
             const img = document.getElementById('image-to-crop');
             img.src = url;
             if (cropper) cropper.destroy();
-            setTimeout(() => {
-                cropper = new Cropper(img, { aspectRatio: 1, viewMode: 1 });
-            }, 200);
+            setTimeout(() => { cropper = new Cropper(img, { aspectRatio: 1, viewMode: 1 }); }, 300);
         }
 
         function confirmCrop() {
-            const canvas = cropper.getCroppedCanvas({ width: 400, height: 400 });
-            document.getElementById('cropped-image-data').value = canvas.toDataURL('image/jpeg', 0.7);
+            const canvas = cropper.getCroppedCanvas({ width: 500, height: 500 });
+            document.getElementById('cropped-image-data').value = canvas.toDataURL('image/jpeg', 0.8);
             document.getElementById('cropper-wrapper').style.display = 'none';
-            alert("تم قص الصورة بنجاح!");
+            alert("تم معالجة الصورة!");
         }
 
-        // جلب البيانات
+        // جلب المنتجات والمجلدات
         db.ref('categories').on('value', snap => {
             allCategories = snap.val() || {};
             renderCategories();
@@ -157,23 +189,25 @@
             renderAdminProducts();
         });
 
-        // إصلاح خطأ undefined في الاسم
+        // إصلاح عرض الطلبات (undefined)
         db.ref('orders').on('value', snap => {
             const orders = snap.val() || {};
             const list = document.getElementById('orders-list');
-            list.innerHTML = Object.keys(orders).map(id => `
-                <div class="bg-slate-800 p-3 rounded border-r-4 border-amber-500 text-xs">
-                    <div class="flex justify-between font-bold text-amber-500">
-                        <span>الزبون: ${orders[id].customer_name || 'غير معروف'}</span>
-                        <span>${orders[id].customer_phone || ''}</span>
+            list.innerHTML = Object.keys(orders).map(id => {
+                const o = orders[id];
+                return `
+                <div class="bg-slate-800 p-4 rounded-lg border-r-4 border-amber-500 shadow-md">
+                    <div class="flex justify-between font-bold text-amber-500 mb-1">
+                        <span>الزبون: ${o.customer_name || 'غير معروف'}</span>
+                        <span class="text-white">${o.customer_phone || ''}</span>
                     </div>
-                    <p class="text-slate-300 mt-1">${orders[id].items_list}</p>
-                    <div class="flex justify-between mt-2 items-center">
-                        <span class="text-green-500">${orders[id].total_price} د.ج</span>
-                        <button onclick="db.ref('orders/${id}').remove()" class="text-red-500 underline">تم التسليم</button>
+                    <div class="text-xs text-slate-300 my-2 bg-black/20 p-2 rounded">${o.items_list || ''}</div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-green-500 font-bold">${o.total_price || 0} د.ج</span>
+                        <button onclick="db.ref('orders/${id}').remove()" class="text-red-500 text-xs font-bold underline">تم التسليم - حذف</button>
                     </div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
         });
 
         function renderProducts() {
@@ -181,15 +215,16 @@
             const search = document.getElementById('mainSearch').value.toLowerCase();
             grid.innerHTML = Object.keys(allProducts).map(id => {
                 const p = allProducts[id];
-                if ((currentFilter === 'all' || (p.categories && p.categories.includes(currentFilter))) && 
-                    p.name.toLowerCase().includes(search)) {
+                const matchesSearch = p.name.toLowerCase().includes(search);
+                const matchesCat = currentFilter === 'all' || (p.categories && p.categories.includes(currentFilter));
+                if(matchesSearch && matchesCat) {
                     return `
-                        <div class="bg-slate-800 p-3 rounded-lg flex flex-col border border-slate-700">
-                            <img src="${p.img}" class="h-28 object-contain bg-white rounded mb-2">
-                            <h3 class="text-[11px] font-bold h-8 overflow-hidden">${p.name}</h3>
-                            <p class="text-amber-500 font-bold my-2 text-sm">${p.price} د.ج</p>
-                            <button onclick="addToCart('${id}')" class="bg-amber-500 text-black text-[10px] py-2 rounded font-bold">أضف للسلة</button>
-                        </div>`;
+                    <div class="product-card flex flex-col">
+                        <img src="${p.img}" class="h-40 w-full object-contain bg-white rounded-lg mb-4 p-2 shadow-inner">
+                        <h3 class="font-bold text-sm mb-2 h-10 overflow-hidden text-amber-500">${p.name}</h3>
+                        <p class="text-white font-bold text-xl mb-4">${p.price} د.ج</p>
+                        <button onclick="addToCart('${id}')" class="mt-auto bg-amber-500 text-black font-bold py-2 rounded-lg hover:bg-amber-400 transition">أضف للسلة</button>
+                    </div>`;
                 }
             }).join('');
         }
@@ -202,23 +237,15 @@
             const original = document.getElementById('p-img').value;
             const cats = Array.from(document.querySelectorAll('input[name="p-cats"]:checked')).map(cb => cb.value);
 
-            let imgToSave;
-            if (id) {
-                // في حالة التعديل، إذا تم قص صورة جديدة نأخذها، وإلا نبقي القديمة
-                imgToSave = cropped || allProducts[id].img;
-            } else {
-                imgToSave = cropped || original;
-            }
+            const imgToSave = cropped || original;
 
             if(name && price && imgToSave && cats.length > 0) {
                 const data = { name, price, img: imgToSave, categories: cats };
                 if(id) db.ref('products/' + id).update(data);
                 else db.ref('products').push(data);
                 resetForm();
-                alert("تم الحفظ بنجاح!");
-            } else {
-                alert("يرجى إكمال البيانات (الاسم، السعر، الصورة، والمجلد)");
-            }
+                alert("تم الحفظ!");
+            } else { alert("أكمل كل البيانات!"); }
         }
 
         function editProduct(id) {
@@ -226,19 +253,16 @@
             document.getElementById('edit-product-id').value = id;
             document.getElementById('p-name').value = p.name;
             document.getElementById('p-price').value = p.price;
-            document.getElementById('p-img').value = "صورة مخزنة";
+            // هنا قمت بالتعديل ليظهر الرابط الحقيقي بدلاً من "صورة مخزنة"
+            document.getElementById('p-img').value = p.img.startsWith('data') ? "صورة مقصوصة مسبقاً" : p.img;
             document.getElementById('form-title').innerText = "تعديل: " + p.name;
-            document.getElementById('submit-btn').innerText = "تحديث التعديلات";
+            document.getElementById('submit-btn').innerText = "تحديث الآن";
             document.getElementById('cancel-edit').classList.remove('hidden');
             
-            // لإتاحة إعادة قص الصورة عند التعديل
-            const pImgInput = document.getElementById('p-img');
-            pImgInput.onclick = function() { this.value = ""; }; // تفريغ الخانة عند النقر لتسهيل وضع رابط جديد
-
             document.querySelectorAll('input[name="p-cats"]').forEach(cb => {
                 cb.checked = p.categories && p.categories.includes(cb.value);
             });
-            window.scrollTo(0, 0);
+            window.scrollTo(0,0);
         }
 
         function resetForm() {
@@ -247,20 +271,21 @@
             document.getElementById('p-price').value = "";
             document.getElementById('p-img').value = "";
             document.getElementById('cropped-image-data').value = "";
-            document.getElementById('form-title').innerText = "إضافة سلعة جديدة:";
-            document.getElementById('submit-btn').innerText = "حفظ ونشر";
+            document.getElementById('form-title').innerText = "إضافة منتج جديد:";
+            document.getElementById('submit-btn').innerText = "حفظ المنتج";
             document.getElementById('cancel-edit').classList.add('hidden');
             document.querySelectorAll('input[name="p-cats"]').forEach(cb => cb.checked = false);
+            if(cropper) cropper.destroy();
             document.getElementById('cropper-wrapper').style.display = 'none';
         }
 
         function renderAdminProducts() {
             document.getElementById('admin-products-list').innerHTML = Object.keys(allProducts).map(id => `
-                <div class="bg-slate-900 p-2 rounded text-[10px] flex flex-col gap-1">
+                <div class="bg-slate-900 p-2 rounded text-[10px] border border-slate-700 flex flex-col gap-1">
                     <span class="truncate">${allProducts[id].name}</span>
-                    <div class="flex gap-2">
-                        <button onclick="editProduct('${id}')" class="text-blue-400">تعديل</button>
-                        <button onclick="if(confirm('حذف؟')) db.ref('products/${id}').remove()" class="text-red-500">حذف</button>
+                    <div class="flex justify-between">
+                        <button onclick="editProduct('${id}')" class="text-blue-400 font-bold">تعديل</button>
+                        <button onclick="if(confirm('حذف؟')) db.ref('products/${id}').remove()" class="text-red-500 font-bold">حذف</button>
                     </div>
                 </div>
             `).join('');
@@ -277,7 +302,7 @@
 
         function updateCatCheckboxes() {
             document.getElementById('cat-checkboxes').innerHTML = Object.values(allCategories).map(c => `
-                <label class="text-[10px] flex items-center gap-1"><input type="checkbox" name="p-cats" value="${c}"> ${c}</label>
+                <label class="text-xs flex items-center gap-1"><input type="checkbox" name="p-cats" value="${c}"> ${c}</label>
             `).join('');
         }
 
@@ -290,9 +315,9 @@
             const total = cart.reduce((s, i) => s + parseInt(i.price), 0);
             document.getElementById('cart-total').innerText = total;
             document.getElementById('cart-items').innerHTML = cart.map((i, idx) => `
-                <div class="flex justify-between border-b border-slate-700 pb-1">
+                <div class="flex justify-between text-xs border-b border-slate-700 pb-1">
                     <span>${i.name}</span>
-                    <button onclick="cart.splice(${idx},1);updateCartUI()" class="text-red-500">X</button>
+                    <button onclick="cart.splice(${idx},1);updateCartUI()" class="text-red-500 font-bold">X</button>
                 </div>
             `).join('');
         }
@@ -302,18 +327,16 @@
             const phone = document.getElementById('cust-phone').value;
             const total = document.getElementById('cart-total').innerText;
             if(name && phone && cart.length > 0) {
-                const list = cart.map(i => i.name).join(' + ');
+                const list = cart.map(i => i.name).join(' | ');
                 db.ref('orders').push({
                     customer_name: name,
                     customer_phone: phone,
                     items_list: list,
                     total_price: total
                 });
-                alert("تم الإرسال!");
+                alert("تم إرسال طلبيتك بنجاح!");
                 cart = []; updateCartUI(); toggleCart();
-            } else {
-                alert("أكمل بياناتك!");
-            }
+            } else { alert("يرجى إدخال الاسم والهاتف"); }
         }
 
         function toggleCart() {
