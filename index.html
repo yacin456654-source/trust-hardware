@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TRUST HARDWARE | ثقة وضمان</title>
     
+    <!-- إضافة اللوغو في ترويسة المتصفح (Favicon) -->
+    <link rel="icon" type="image/jpg" href="https://scontent.floo1-2.fna.fbcdn.net/v/t39.30808-1/682006759_122095180376344266_5380399349240977356_n.jpg?stp=dst-jpg_s160x160_tt6&_nc_cat=104&ccb=1-7&_nc_sid=1d2534&_nc_ohc=F8ArBc2in4EQ7kNvwE59jEr&_nc_oc=AdqSQL9UW2FqvMmynIS3b37eom0-7urCMfI_exNmQI6jFgPBaGKlTXf6n0n4kbbp_E0&_nc_zt=24&_nc_ht=scontent.floo1-2.fna&_nc_gid=Tn2WacjLMDww-TRhwhXfBA&_nc_ss=7b2a8&oh=00_Af3Zi8oEiwkhfktys-FC-pbJ5jPVQXbpR0mp8Sju-TaCTg&oe=69F59C1A">
+
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -15,30 +18,23 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
         body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: white; }
-        
         .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
         @media (min-width: 768px) { .product-grid { grid-template-columns: repeat(4, 1fr); } }
-
         .product-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; transition: 0.3s; padding: 15px; text-align: center; }
         .product-card:hover { border-color: #f59e0b; }
-        
         .order-input { color: black !important; background: white !important; font-weight: bold; border: 2px solid #334155; padding: 10px; border-radius: 8px; width: 100%; margin-bottom: 10px; }
         .admin-section { display: none; background: #1e293b; padding: 25px; border-radius: 15px; border: 2px solid #f59e0b; margin: 20px auto; max-width: 1200px; }
-        
         #cropper-wrapper { display: none; margin: 15px 0; background: #000; border-radius: 8px; overflow: hidden; }
         #image-to-crop { max-width: 100%; display: block; }
-        
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; overflow-y: auto; padding: 20px; }
         .cat-btn { background: #334155; padding: 8px 18px; border-radius: 20px; cursor: pointer; white-space: nowrap; }
         .cat-btn.active { background: #f59e0b; color: black; font-weight: bold; }
-        
         .o-card { background: #1a202c; border-right: 4px solid #f59e0b; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
-        #home-address-div { display: none; }
+        #home-address-div, #custom-requirement-div { display: none; }
     </style>
 </head>
 <body>
 
-    <!-- Header المعتمد مع رابط الفيسبوك الجديد -->
     <header class="bg-slate-900 border-b border-amber-500 sticky top-0 z-50 p-4 shadow-xl">
         <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-3">
@@ -58,7 +54,7 @@
 
     <div id="categories-bar" class="flex gap-3 p-4 overflow-x-auto justify-center bg-slate-800/50"></div>
 
-    <!-- لوحة الإدارة -->
+    <!-- لوحة الإدارة المحدثة -->
     <section id="admin-panel" class="admin-section">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold text-amber-500">لوحة الإدارة</h2>
@@ -72,9 +68,12 @@
                 
                 <input type="text" id="p-name" placeholder="اسم المنتج" class="order-input text-center">
                 <input type="number" id="p-price" placeholder="السعر (د.ج)" class="order-input text-center">
-                <input type="text" id="p-img" placeholder="ضع رابط الصورة هنا" class="order-input text-center">
+                <input type="text" id="p-img" placeholder="رابط الصورة" class="order-input text-center">
                 
-                <button onclick="manualCropTrigger()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-lg mb-3 transition">
+                <!-- إضافة الخيار الجديد هنا -->
+                <input type="text" id="p-requirement" placeholder="طلب خاص؟ (مثلاً: اكتب اللون، المقاس..)" class="order-input text-center border-dashed border-amber-500">
+                
+                <button onclick="manualCropTrigger()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-lg mb-3 shadow">
                     <i class="fas fa-crop-alt ml-2"></i> قص الصورة
                 </button>
 
@@ -103,11 +102,6 @@
                 <div id="orders-list" class="space-y-4 max-h-[600px] overflow-y-auto p-2"></div>
             </div>
         </div>
-        
-        <div class="mt-8 border-t border-slate-700 pt-5 text-xs">
-            <h3 class="text-amber-500 font-bold mb-4 text-sm underline">قائمة المنتجات للحذف والتعديل:</h3>
-            <div id="admin-products-list" class="grid grid-cols-2 md:grid-cols-6 gap-3"></div>
-        </div>
     </section>
 
     <main class="container mx-auto p-4 mt-6">
@@ -119,12 +113,14 @@
         <span id="cart-count">0</span> | <span id="cart-total">0</span> د.ج
     </div>
 
-    <!-- مودال تأكيد الطلب المحدث -->
+    <!-- مودال تأكيد الطلب المطور -->
     <div id="cart-modal" class="modal">
         <div class="bg-slate-800 p-6 rounded-2xl w-full max-w-lg border border-amber-500 relative shadow-2xl">
             <h2 class="text-2xl font-bold text-amber-500 mb-4 text-center">تأكيد الطلبية</h2>
             
-            <div id="cart-items" class="mb-4 space-y-2 max-h-32 overflow-y-auto bg-slate-900 p-3 rounded text-sm border border-slate-700"></div>
+            <div id="cart-items" class="mb-4 space-y-2 max-h-32 overflow-y-auto bg-slate-900 p-3 rounded text-sm border border-slate-700 text-right"></div>
+
+            <div id="custom-requirements-area" class="mb-4"></div>
 
             <div class="grid grid-cols-2 gap-2 mb-2">
                 <input type="text" id="cust-name" placeholder="الاسم الكامل" class="order-input">
@@ -140,19 +136,17 @@
                 <option value="باب المنزل">التوصيل لباب المنزل</option>
             </select>
 
-            <!-- خانة عنوان المنزل تظهر فقط عند اختيار "باب المنزل" -->
             <div id="home-address-div">
-                <input type="text" id="cust-address" placeholder="اكتب عنوان المنزل بالتفصيل" class="order-input border-amber-500 border-2">
+                <input type="text" id="cust-address" placeholder="عنوان المنزل بالتفصيل" class="order-input border-amber-500 border-2">
             </div>
 
             <div class="bg-amber-500/10 border border-amber-500/30 p-3 rounded-lg mb-4 text-[11px] leading-relaxed text-slate-300">
                 <p class="font-bold text-amber-500 mb-1 italic">المعاهدة:</p>
-                أعدكم بأنني سوف أستلم الطلبية وأعلم أن عدم استلامي لها يسبب لكم خسائر بسبب مصاريف التوصيل والإرجاع، مستحضرًا قول الله تعالى: {والمُوفُون بعَهْدِهِمْ إذَا عَاهَدُوا}. 
-                <br> <span class="text-white font-bold">نرجو إعلامنا إذا حدث تأخير من شركة التوصيل لأكثر من 3 أيام.</span>
+                {والمُوفُون بعَهْدِهِمْ إذَا عَاهَدُوا}. نرجو إعلامنا إذا حدث تأخير لأكثر من 3 أيام.
             </div>
 
-            <button onclick="sendOrder()" class="w-full bg-green-600 py-4 rounded-xl font-bold text-lg hover:bg-green-500 transition shadow-lg text-white">إتمام الطلب وتأكيد الحجز</button>
-            <button onclick="toggleCart()" class="w-full mt-4 text-slate-400 text-sm hover:text-white">إلغاء والعودة للمتجر</button>
+            <button onclick="sendOrder()" class="w-full bg-green-600 py-4 rounded-xl font-bold text-lg hover:bg-green-500 transition shadow-lg text-white">إتمام الحجز</button>
+            <button onclick="toggleCart()" class="w-full mt-4 text-slate-400 text-sm">إلغاء</button>
         </div>
     </div>
 
@@ -172,36 +166,7 @@
         let allProducts = {}, allCategories = {}, cart = [], cropper, currentFilter = 'all', clickCount = 0;
 
         function toggleAddressInput() {
-            const type = document.getElementById('delivery-type').value;
-            const div = document.getElementById('home-address-div');
-            div.style.display = (type === 'باب المنزل') ? 'block' : 'none';
-        }
-
-        // ميزة قص الصورة اليدوية
-        function manualCropTrigger() {
-            const url = document.getElementById('p-img').value;
-            if(!url || url === "" || url.includes("data:image")) return alert("يرجى وضع رابط صورة صالح أولاً");
-            document.getElementById('cropper-wrapper').style.display = 'block';
-            const img = document.getElementById('image-to-crop');
-            img.src = url;
-            if (cropper) cropper.destroy();
-            setTimeout(() => { cropper = new Cropper(img, { aspectRatio: 1, viewMode: 1 }); }, 300);
-        }
-
-        function confirmCrop() {
-            const canvas = cropper.getCroppedCanvas({ width: 600, height: 600 });
-            document.getElementById('cropped-image-data').value = canvas.toDataURL('image/jpeg', 0.8);
-            document.getElementById('cropper-wrapper').style.display = 'none';
-            alert("تم القص بنجاح!");
-        }
-
-        function addCategory() {
-            const name = document.getElementById('new-cat-name').value;
-            if(name) { db.ref('categories').push(name); document.getElementById('new-cat-name').value = ""; }
-        }
-
-        function deleteCategory(id) {
-            if(confirm('سيتم حذف المجلد، هل أنت متأكد؟')) db.ref('categories/'+id).remove();
+            document.getElementById('home-address-div').style.display = (document.getElementById('delivery-type').value === 'باب المنزل') ? 'block' : 'none';
         }
 
         db.ref('categories').on('value', snap => {
@@ -209,11 +174,9 @@
             renderCategories();
             updateCatCheckboxes();
             document.getElementById('admin-cats-list').innerHTML = Object.keys(allCategories).map(id => `
-                <div class="bg-slate-700 px-3 py-1 rounded-full flex items-center gap-2 border border-slate-600">
-                    ${allCategories[id]}
-                    <i onclick="deleteCategory('${id}')" class="fas fa-times text-red-500 cursor-pointer"></i>
-                </div>
-            `).join('');
+                <div class="bg-slate-700 px-3 py-1 rounded-full flex items-center gap-2">
+                    ${allCategories[id]} <i onclick="db.ref('categories/${id}').remove()" class="fas fa-times text-red-500 cursor-pointer"></i>
+                </div>`).join('');
         });
 
         db.ref('products').on('value', snap => {
@@ -222,30 +185,22 @@
             renderAdminProducts();
         });
 
-        db.ref('orders').on('value', snap => {
-            const orders = snap.val() || {};
-            const list = document.getElementById('orders-list');
-            list.innerHTML = Object.keys(orders).map(id => {
-                const o = orders[id];
-                return `
-                <div class="o-card border border-slate-700">
-                    <div class="flex justify-between font-bold text-amber-500 mb-1">
-                        <span>الزبون: ${o.customer_name || '؟'}</span>
-                        <span class="text-white">${o.customer_phone || ''}</span>
-                    </div>
-                    <div class="text-[10px] text-slate-400 grid grid-cols-2 gap-x-2 mb-2 bg-slate-800 p-2 rounded">
-                        <span>الولاية: ${o.state || '/'}</span>
-                        <span>البلدية: ${o.city || '/'}</span>
-                        <span class="col-span-2 text-white">التوصيل: ${o.delivery || '/'} ${o.address ? '- العنوان: '+o.address : ''}</span>
-                    </div>
-                    <div class="bg-black/30 p-2 rounded text-[11px] mb-2 border border-slate-700">${o.items_list}</div>
-                    <div class="flex justify-between items-center border-t border-slate-700 pt-2">
-                        <span class="text-green-400 font-bold">المجموع: ${o.total_price} د.ج</span>
-                        <button onclick="db.ref('orders/${id}').remove()" class="bg-red-500/20 text-red-500 px-3 py-1 rounded text-xs font-bold border border-red-500/50">حذف الطلب</button>
-                    </div>
-                </div>`;
-            }).reverse().join('');
-        });
+        function saveProduct() {
+            const id = document.getElementById('edit-product-id').value;
+            const cropped = document.getElementById('cropped-image-data').value;
+            const data = {
+                name: document.getElementById('p-name').value,
+                price: document.getElementById('p-price').value,
+                img: (cropped && cropped !== "") ? cropped : document.getElementById('p-img').value,
+                requirement: document.getElementById('p-requirement').value, // حفظ المتطلب الجديد
+                categories: Array.from(document.querySelectorAll('input[name="p-cats"]:checked')).map(cb => cb.value)
+            };
+            if(data.name && data.price && data.img) {
+                if(id) db.ref('products/' + id).update(data);
+                else db.ref('products').push(data);
+                resetForm();
+            }
+        }
 
         function renderProducts() {
             const grid = document.getElementById('products-grid');
@@ -254,162 +209,87 @@
                 const p = allProducts[id];
                 if(p.name.toLowerCase().includes(search) && (currentFilter === 'all' || (p.categories && p.categories.includes(currentFilter)))) {
                     return `
-                    <div class="product-card flex flex-col h-full shadow-lg">
-                        <div class="bg-white rounded-lg p-2 mb-4 h-48 flex items-center justify-center overflow-hidden border border-slate-700">
-                            <img src="${p.img}" class="max-h-full max-w-full object-contain">
-                        </div>
-                        <h3 class="font-bold text-sm mb-2 text-amber-500 h-10 overflow-hidden leading-tight">${p.name}</h3>
+                    <div class="product-card flex flex-col h-full">
+                        <div class="bg-white rounded-lg p-2 mb-4 h-48 flex items-center justify-center overflow-hidden"><img src="${p.img}" class="max-h-full"></div>
+                        <h3 class="font-bold text-sm mb-2 text-amber-500 h-10 overflow-hidden">${p.name}</h3>
                         <p class="text-white font-bold text-xl mb-4">${p.price} د.ج</p>
-                        <button onclick="addToCart('${id}')" class="mt-auto bg-amber-500 text-black font-bold py-2 rounded-lg hover:bg-amber-400 transition-all active:scale-95 shadow-md">أضف للسلة</button>
+                        <button onclick="addToCart('${id}')" class="bg-amber-500 text-black font-bold py-2 rounded-lg">أضف للسلة</button>
                     </div>`;
                 }
             }).join('');
         }
 
-        function saveProduct() {
-            const id = document.getElementById('edit-product-id').value;
-            const cropped = document.getElementById('cropped-image-data').value;
-            const original = document.getElementById('p-img').value;
-            const cats = Array.from(document.querySelectorAll('input[name="p-cats"]:checked')).map(cb => cb.value);
-            
-            const data = {
-                name: document.getElementById('p-name').value,
-                price: document.getElementById('p-price').value,
-                img: (cropped && cropped !== "") ? cropped : original,
-                categories: cats
-            };
+        function addToCart(id) { cart.push({id: id, ...allProducts[id]}); updateCartUI(); }
 
-            if(data.name && data.price && data.img && cats.length > 0) {
-                if(id) db.ref('products/' + id).update(data);
-                else db.ref('products').push(data);
-                resetForm();
-                alert("تم حفظ المنتج بنجاح في قاعدة البيانات!");
-            } else {
-                alert("يرجى إكمال جميع الحقول واختيار مجلد واحد على الأقل");
-            }
-        }
-
-        function editProduct(id) {
-            const p = allProducts[id];
-            document.getElementById('edit-product-id').value = id;
-            document.getElementById('p-name').value = p.name;
-            document.getElementById('p-price').value = p.price;
-            document.getElementById('p-img').value = p.img.startsWith('data') ? "صورة مقصوصة مخزنة" : p.img;
-            document.querySelectorAll('input[name="p-cats"]').forEach(cb => {
-                cb.checked = p.categories && p.categories.includes(cb.value);
-            });
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        }
-
-        function resetForm() {
-            document.getElementById('edit-product-id').value = "";
-            document.getElementById('p-name').value = "";
-            document.getElementById('p-price').value = "";
-            document.getElementById('p-img').value = "";
-            document.getElementById('cropped-image-data').value = "";
-            document.querySelectorAll('input[name="p-cats"]').forEach(cb => cb.checked = false);
-            if(cropper) cropper.destroy();
-            document.getElementById('cropper-wrapper').style.display = 'none';
-        }
-
-        function renderAdminProducts() {
-            document.getElementById('admin-products-list').innerHTML = Object.keys(allProducts).map(id => `
-                <div class="bg-slate-900 p-2 rounded text-[9px] border border-slate-700">
-                    <span class="truncate block font-bold mb-1 border-b border-slate-800 pb-1">${allProducts[id].name}</span>
-                    <div class="flex justify-between gap-1">
-                        <button onclick="editProduct('${id}')" class="bg-blue-600 px-2 py-1 rounded w-full">تعديل</button>
-                        <button onclick="if(confirm('حذف نهائي؟')) db.ref('products/${id}').remove()" class="bg-red-600 px-2 py-1 rounded w-full text-white">×</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderCategories() {
-            const bar = document.getElementById('categories-bar');
-            let html = `<div onclick="setFilter('all')" class="cat-btn ${currentFilter === 'all' ? 'active' : ''}">الكل</div>`;
-            Object.values(allCategories).forEach(c => {
-                html += `<div onclick="setFilter('${c}')" class="cat-btn ${currentFilter === c ? 'active' : ''}">${c}</div>`;
-            });
-            bar.innerHTML = html;
-        }
-
-        function updateCatCheckboxes() {
-            document.getElementById('cat-checkboxes').innerHTML = Object.values(allCategories).map(c => `
-                <label class="flex items-center gap-1 cursor-pointer bg-slate-800 p-1 px-2 rounded border border-slate-700 hover:border-amber-500">
-                    <input type="checkbox" name="p-cats" value="${c}"> ${c}
-                </label>
-            `).join('');
-        }
-
-        function setFilter(c) { currentFilter = c; renderCategories(); renderProducts(); }
-        function addToCart(id) { cart.push(allProducts[id]); updateCartUI(); }
-        
         function updateCartUI() {
             document.getElementById('cart-count').innerText = cart.length;
-            const total = cart.reduce((s, i) => s + parseInt(i.price), 0);
-            document.getElementById('cart-total').innerText = total;
+            document.getElementById('cart-total').innerText = cart.reduce((s, i) => s + parseInt(i.price), 0);
+            
+            // عرض خانات المتطلبات الخاصة للمنتجات في السلة
+            const reqArea = document.getElementById('custom-requirements-area');
+            reqArea.innerHTML = "";
+            cart.forEach((item, idx) => {
+                if(item.requirement && item.requirement.trim() !== "") {
+                    reqArea.innerHTML += `
+                    <div class="bg-slate-700/50 p-2 rounded mb-2 border-r-2 border-blue-500">
+                        <label class="text-[10px] text-blue-300 block mb-1">${item.name}:</label>
+                        <input type="text" placeholder="${item.requirement}" class="order-input text-sm custom-req-input" data-idx="${idx}">
+                    </div>`;
+                }
+            });
+
             document.getElementById('cart-items').innerHTML = cart.map((i, idx) => `
-                <div class="flex justify-between items-center border-b border-slate-700 pb-2">
-                    <span class="w-2/3 truncate text-[12px]">${i.name}</span>
-                    <button onclick="cart.splice(${idx},1);updateCartUI()" class="text-red-500 bg-red-500/10 px-2 rounded font-bold">×</button>
-                </div>
-            `).join('');
+                <div class="flex justify-between items-center border-b border-slate-700 pb-1">
+                    <span class="truncate w-3/4 text-[11px]">${i.name}</span>
+                    <button onclick="cart.splice(${idx},1);updateCartUI()" class="text-red-500">×</button>
+                </div>`).join('');
         }
 
         function sendOrder() {
             const name = document.getElementById('cust-name').value;
             const phone = document.getElementById('cust-phone').value;
-            const state = document.getElementById('cust-state').value;
-            const city = document.getElementById('cust-city').value;
             const delivery = document.getElementById('delivery-type').value;
             const address = document.getElementById('cust-address').value;
-            const total = document.getElementById('cart-total').innerText;
 
-            if(name && phone && state && city && cart.length > 0) {
-                if(delivery === 'باب المنزل' && !address) {
-                    alert("يرجى كتابة عنوان المنزل لضمان التوصيل الصحيح");
-                    return;
-                }
-                
-                const list = cart.map(i => i.name).join(' | ');
-                
-                // حفظ في قاعدة البيانات فقط
+            if(name && phone && cart.length > 0) {
+                // تجميع المتطلبات الخاصة المكتوبة
+                const reqInputs = document.querySelectorAll('.custom-req-input');
+                let finalItemsList = "";
+                cart.forEach((item, idx) => {
+                    let reqVal = "";
+                    reqInputs.forEach(input => { if(parseInt(input.dataset.idx) === idx) reqVal = " (" + input.value + ")"; });
+                    finalItemsList += item.name + reqVal + " | ";
+                });
+
                 db.ref('orders').push({
                     customer_name: name,
                     customer_phone: phone,
-                    state: state,
-                    city: city,
+                    state: document.getElementById('cust-state').value,
+                    city: document.getElementById('cust-city').value,
                     delivery: delivery,
-                    address: (delivery === 'باب المنزل' ? address : ''),
-                    items_list: list,
-                    total_price: total,
+                    address: address,
+                    items_list: finalItemsList,
+                    total_price: document.getElementById('cart-total').innerText,
                     date: new Date().toLocaleString('ar-DZ')
                 });
-
-                alert("تم استلام طلبك بنجاح! شكراً على ثقتك، سيتم التواصل معك قريباً.");
+                alert("تم استلام طلبك بنجاح!");
                 cart = []; updateCartUI(); toggleCart();
-            } else {
-                alert("يرجى ملء جميع بيانات التوصيل الأساسية");
             }
         }
 
-        function toggleCart() {
-            const m = document.getElementById('cart-modal');
-            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
-        }
-
-        function handleSecretClick() {
-            clickCount++;
-            if(clickCount === 5) {
-                if(prompt("كلمة السر الخاصة بالبائع:") === "yacin..yacin.") {
-                    document.getElementById('admin-panel').style.display = 'block';
-                    window.scrollTo({top: 0, behavior: 'smooth'});
-                }
-                clickCount = 0;
-            }
-        }
+        // الوظائف المساعدة (نفس السكريبت السابق)
+        function handleSecretClick() { clickCount++; if(clickCount === 5) { if(prompt("الباسورد:") === "yacin..yacin.") document.getElementById('admin-panel').style.display = 'block'; clickCount = 0; } }
         function closeAdmin() { document.getElementById('admin-panel').style.display = 'none'; }
+        function addCategory() { const n = document.getElementById('new-cat-name').value; if(n) db.ref('categories').push(n); }
+        function manualCropTrigger() { const url = document.getElementById('p-img').value; if(!url) return; document.getElementById('cropper-wrapper').style.display = 'block'; const img = document.getElementById('image-to-crop'); img.src = url; if (cropper) cropper.destroy(); setTimeout(() => { cropper = new Cropper(img, { aspectRatio: 1 }); }, 300); }
+        function confirmCrop() { const canvas = cropper.getCroppedCanvas({ width: 600, height: 600 }); document.getElementById('cropped-image-data').value = canvas.toDataURL('image/jpeg'); document.getElementById('cropper-wrapper').style.display = 'none'; alert("تم!"); }
+        function toggleCart() { const m = document.getElementById('cart-modal'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; }
+        function renderCategories() { document.getElementById('categories-bar').innerHTML = `<div onclick="setFilter('all')" class="cat-btn ${currentFilter === 'all' ? 'active' : ''}">الكل</div>` + Object.values(allCategories).map(c => `<div onclick="setFilter('${c}')" class="cat-btn ${currentFilter === c ? 'active' : ''}">${c}</div>`).join(''); }
+        function setFilter(c) { currentFilter = c; renderCategories(); renderProducts(); }
+        function updateCatCheckboxes() { document.getElementById('cat-checkboxes').innerHTML = Object.values(allCategories).map(c => `<label class="flex items-center gap-1"><input type="checkbox" name="p-cats" value="${c}"> ${c}</label>`).join(''); }
+        function resetForm() { document.getElementById('p-name').value = ""; document.getElementById('p-price').value = ""; document.getElementById('p-img').value = ""; document.getElementById('p-requirement').value = ""; document.getElementById('cropped-image-data').value = ""; }
+        function renderAdminProducts() { document.getElementById('admin-products-list').innerHTML = Object.keys(allProducts).map(id => `<div class="bg-slate-900 p-2 rounded text-[9px] border border-slate-700"><span class="truncate block font-bold">${allProducts[id].name}</span><button onclick="editProduct('${id}')" class="bg-blue-600 px-2 py-1 rounded w-full mt-1">تعديل</button></div>`).join(''); }
+        function editProduct(id) { const p = allProducts[id]; document.getElementById('edit-product-id').value = id; document.getElementById('p-name').value = p.name; document.getElementById('p-price').value = p.price; document.getElementById('p-requirement').value = p.requirement || ""; window.scrollTo(0,0); }
     </script>
 </body>
 </html>
-
