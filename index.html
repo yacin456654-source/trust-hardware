@@ -5,10 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TRUST HARDWARE DJELFA | ثقة وضمان</title>
     
-    <!-- اللوجو في علامة التبويب (Favicon) -->
     <link rel="icon" type="image/jpg" href="https://scontent.floo1-2.fna.fbcdn.net/v/t39.30808-1/682006759_122095180376344266_5380399349240977356_n.jpg?stp=dst-jpg_s160x160_tt6&_nc_cat=104&ccb=1-7&_nc_sid=1d2534&_nc_ohc=F8ArBc2in4EQ7kNvwE59jEr&_nc_oc=AdqSQL9UW2FqvMmynIS3b37eom0-7urCMfI_exNmQI6jFgPBaGKlTXf6n0n4kbbp_E0&_nc_zt=24&_nc_ht=scontent.floo1-2.fna&_nc_gid=Tn2WacjLMDww-TRhwhXfBA&_nc_ss=7b2a8&oh=00_Af3Zi8oEiwkhfktys-FC-pbJ5jPVQXbpR0mp8Sju-TaCTg&oe=69F59C1A">
     
-    <!-- المكاتب اللازمة -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -20,15 +18,8 @@
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
         body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: white; }
         
-        /* جعل المنتجات 4 في السطر في الشاشات الكبيرة و 2 في الموبايل */
-        .product-grid { 
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 20px; 
-        }
-        @media (min-width: 768px) {
-            .product-grid { grid-template-columns: repeat(4, 1fr); }
-        }
+        .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        @media (min-width: 768px) { .product-grid { grid-template-columns: repeat(4, 1fr); } }
 
         .product-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; transition: 0.3s; padding: 15px; text-align: center; }
         .product-card:hover { border-color: #f59e0b; }
@@ -36,7 +27,7 @@
         .order-input { color: black !important; background: white !important; font-weight: bold; border: 2px solid #334155; padding: 10px; border-radius: 8px; width: 100%; margin-bottom: 10px; }
         .admin-section { display: none; background: #1e293b; padding: 25px; border-radius: 15px; border: 2px solid #f59e0b; margin: 20px auto; max-width: 1200px; }
         
-        #cropper-wrapper { display: none; margin: 15px 0; background: #000; border-radius: 8px; overflow: hidden; }
+        #cropper-wrapper { display: none; margin: 15px 0; background: #000; border-radius: 8px; overflow: hidden; position: relative; }
         #image-to-crop { max-width: 100%; display: block; }
         
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; }
@@ -46,105 +37,93 @@
 </head>
 <body>
 
-    <!-- الهيدر المطور -->
     <header class="bg-slate-900 border-b border-amber-500 sticky top-0 z-50 p-4 shadow-xl">
-        <div class="container mx-auto">
-            <!-- الجزء العلوي: اللوجو ومعلومات التواصل -->
-            <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-                <div class="flex items-center gap-3">
-                    <img src="https://scontent.floo1-2.fna.fbcdn.net/v/t39.30808-1/682006759_122095180376344266_5380399349240977356_n.jpg?stp=dst-jpg_s160x160_tt6&_nc_cat=104&ccb=1-7&_nc_sid=1d2534&_nc_ohc=F8ArBc2in4EQ7kNvwE59jEr&_nc_oc=AdqSQL9UW2FqvMmynIS3b37eom0-7urCMfI_exNmQI6jFgPBaGKlTXf6n0n4kbbp_E0&_nc_zt=24&_nc_ht=scontent.floo1-2.fna&_nc_gid=Tn2WacjLMDww-TRhwhXfBA&_nc_ss=7b2a8&oh=00_Af3Zi8oEiwkhfktys-FC-pbJ5jPVQXbpR0mp8Sju-TaCTg&oe=69F59C1A" class="h-14 w-14 rounded-full border-2 border-amber-500 shadow-lg">
-                    <div>
-                        <h1 class="text-xl font-bold text-amber-500 leading-none">TRUST HARDWARE</h1>
-                        <div class="flex gap-4 mt-2 text-xs text-slate-300">
-                            <a href="https://www.facebook.com/profile.php?id=61560327990792" target="_blank" class="hover:text-amber-500"><i class="fab fa-facebook text-amber-500"></i> Facebook</a>
-                            <span><i class="fas fa-phone text-amber-500"></i> 0659992619</span>
-                        </div>
-                    </div>
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <img src="https://scontent.floo1-2.fna.fbcdn.net/v/t39.30808-1/682006759_122095180376344266_5380399349240977356_n.jpg?stp=dst-jpg_s160x160_tt6&_nc_cat=104&ccb=1-7&_nc_sid=1d2534&_nc_ohc=F8ArBc2in4EQ7kNvwE59jEr&_nc_oc=AdqSQL9UW2FqvMmynIS3b37eom0-7urCMfI_exNmQI6jFgPBaGKlTXf6n0n4kbbp_E0&_nc_zt=24&_nc_ht=scontent.floo1-2.fna&_nc_gid=Tn2WacjLMDww-TRhwhXfBA&_nc_ss=7b2a8&oh=00_Af3Zi8oEiwkhfktys-FC-pbJ5jPVQXbpR0mp8Sju-TaCTg&oe=69F59C1A" class="h-12 w-12 rounded-full border border-amber-500">
+                <div>
+                    <h1 class="text-lg font-bold text-amber-500">TRUST HARDWARE</h1>
+                    <p class="text-[10px] text-slate-400">0659992619 | Facebook</p>
                 </div>
-                
-                <!-- مكان البحث في الوسط -->
-                <div class="flex-1 max-w-md relative">
-                    <input type="text" id="mainSearch" onkeyup="renderProducts()" placeholder="ابحث عن المنتجات هنا..." class="w-full bg-slate-800 border border-slate-700 rounded-full py-2 px-10 focus:border-amber-500 outline-none text-center">
-                    <i class="fas fa-search absolute right-4 top-3 text-slate-500"></i>
-                </div>
-
-                <!-- زر الإدارة المخفي -->
-                <div onclick="handleSecretClick()" class="w-10 h-10 bg-amber-500 rounded opacity-0 cursor-pointer"></div>
             </div>
+            
+            <div class="flex-1 max-w-md relative">
+                <input type="text" id="mainSearch" onkeyup="renderProducts()" placeholder="ابحث عن المنتجات هنا..." class="w-full bg-slate-800 border border-slate-700 rounded-full py-2 px-10 outline-none text-center focus:border-amber-500">
+                <i class="fas fa-search absolute right-4 top-3 text-slate-500"></i>
+            </div>
+
+            <div onclick="handleSecretClick()" class="w-10 h-10 bg-amber-500 rounded opacity-0 cursor-pointer"></div>
         </div>
     </header>
 
-    <!-- شريط المجلدات -->
     <div id="categories-bar" class="flex gap-3 p-4 overflow-x-auto justify-center bg-slate-800/50"></div>
 
-    <!-- لوحة التحكم -->
     <section id="admin-panel" class="admin-section">
-        <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-3">
+        <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold text-amber-500">لوحة الإدارة</h2>
             <button onclick="closeAdmin()" class="bg-red-600 px-4 py-1 rounded">إغلاق</button>
         </div>
 
         <div class="grid lg:grid-cols-2 gap-8">
-            <!-- فورم المنتج -->
             <div class="bg-slate-800 p-5 rounded-xl border border-slate-700">
-                <h3 id="form-title" class="font-bold text-amber-400 mb-4">إضافة/تعديل منتج:</h3>
+                <h3 id="form-title" class="font-bold text-amber-400 mb-4 text-center underline">إضافة / تعديل منتج</h3>
                 <div id="cat-checkboxes" class="flex flex-wrap gap-2 mb-4 bg-slate-900 p-3 rounded"></div>
                 
-                <input type="text" id="p-name" placeholder="اسم المنتج" class="order-input">
-                <input type="number" id="p-price" placeholder="السعر (د.ج)" class="order-input">
-                <!-- عند التعديل سيظهر الرابط هنا ولن يظهر كلمة صورة مخزنة -->
-                <input type="text" id="p-img" onchange="startCropping(this.value)" placeholder="رابط الصورة" class="order-input">
+                <input type="text" id="p-name" placeholder="اسم المنتج" class="order-input text-center">
+                <input type="number" id="p-price" placeholder="السعر (د.ج)" class="order-input text-center">
+                <input type="text" id="p-img" placeholder="ضع رابط الصورة هنا" class="order-input text-center">
                 
+                <!-- زر قص الصورة الجديد -->
+                <button onclick="manualCropTrigger()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-lg mb-3 transition">
+                    <i class="fas fa-crop-alt ml-2"></i> قص الصورة
+                </button>
+
                 <div id="cropper-wrapper">
                     <img id="image-to-crop">
-                    <button onclick="confirmCrop()" class="w-full bg-green-600 py-3 font-bold mt-2">تأكيد القص</button>
+                    <button onclick="confirmCrop()" class="w-full bg-green-600 py-3 font-bold mt-2">تأكيد منطقة القص</button>
                 </div>
 
                 <input type="hidden" id="edit-product-id">
                 <input type="hidden" id="cropped-image-data">
 
-                <button id="submit-btn" onclick="saveProduct()" class="w-full bg-amber-500 text-black font-bold py-3 rounded-lg mt-3">حفظ المنتج</button>
-                <button id="cancel-edit" onclick="resetForm()" class="hidden w-full bg-slate-600 py-2 mt-2 rounded">إلغاء</button>
+                <button id="submit-btn" onclick="saveProduct()" class="w-full bg-amber-500 text-black font-bold py-3 rounded-lg mt-1 text-xl">حفظ المنتج</button>
+                <button id="cancel-edit" onclick="resetForm()" class="hidden w-full bg-slate-600 py-2 mt-2 rounded">إلغاء التعديل</button>
             </div>
 
-            <!-- الطلبات (تم إصلاح الـ undefined) -->
-            <div class="bg-slate-900 p-5 rounded-xl">
-                <h3 class="text-amber-500 font-bold mb-4 italic underline">الطلبات الواردة من الزبائن:</h3>
+            <!-- قسم الطلبات المصلح -->
+            <div class="bg-slate-900 p-5 rounded-xl border border-slate-700">
+                <h3 class="text-amber-500 font-bold mb-4 italic text-center underline">الطلبات الواردة:</h3>
                 <div id="orders-list" class="space-y-4 max-h-[500px] overflow-y-auto"></div>
             </div>
         </div>
 
-        <div class="mt-8">
-            <h3 class="text-amber-500 font-bold mb-4">المنتجات المنشورة حالياً:</h3>
+        <div class="mt-8 border-t border-slate-700 pt-5">
+            <h3 class="text-amber-500 font-bold mb-4">قائمة المنتجات (للحذف والتعديل):</h3>
             <div id="admin-products-list" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3"></div>
         </div>
     </section>
 
-    <!-- واجهة الزبون -->
     <main class="container mx-auto p-4 mt-6">
         <div id="products-grid" class="product-grid"></div>
     </main>
 
-    <!-- سلة التسوق -->
     <div id="cart-badge" class="fixed bottom-6 left-6 bg-amber-500 text-black px-6 py-4 rounded-full font-bold cursor-pointer shadow-2xl z-50 flex items-center gap-2" onclick="toggleCart()">
         <i class="fas fa-shopping-cart"></i>
         <span id="cart-count">0</span> | <span id="cart-total">0</span> د.ج
     </div>
 
-    <!-- مودال السلة -->
     <div id="cart-modal" class="modal">
-        <div class="bg-slate-800 p-8 rounded-2xl w-full max-w-md border border-amber-500">
-            <h2 class="text-2xl font-bold text-amber-500 mb-4 text-center">إتمام الطلب</h2>
-            <div id="cart-items" class="mb-4 space-y-2 max-h-40 overflow-y-auto bg-slate-900 p-3 rounded"></div>
+        <div class="bg-slate-800 p-8 rounded-2xl w-full max-w-md border border-amber-500 mx-4">
+            <h2 class="text-2xl font-bold text-amber-500 mb-4 text-center">تأكيد الطلبية</h2>
+            <div id="cart-items" class="mb-4 space-y-2 max-h-40 overflow-y-auto bg-slate-900 p-3 rounded text-sm"></div>
             <input type="text" id="cust-name" placeholder="اسمك الكامل" class="order-input">
-            <input type="text" id="cust-phone" placeholder="رقم الهاتف" class="order-input">
-            <button onclick="sendOrder()" class="w-full bg-green-600 py-4 rounded-xl font-bold text-lg mt-2">إرسال الطلبية الآن</button>
-            <button onclick="toggleCart()" class="w-full mt-4 text-slate-400">إغلاق</button>
+            <input type="text" id="cust-phone" placeholder="رقم هاتفك" class="order-input">
+            <button onclick="sendOrder()" class="w-full bg-green-600 py-4 rounded-xl font-bold text-lg mt-2 hover:bg-green-500 transition">إرسال الطلب عبر الواتساب</button>
+            <button onclick="toggleCart()" class="w-full mt-4 text-slate-400">عودة للمتجر</button>
         </div>
     </div>
 
     <script>
-        // إعدادات Firebase (نفس إعداداتك)
         const firebaseConfig = {
             apiKey: "AIzaSyBDxdhBktG-DanMbZq8k7cVg7bgY3NnQkk",
             authDomain: "trust-hardware.firebaseapp.com",
@@ -159,24 +138,34 @@
 
         let allProducts = {}, allCategories = {}, cart = [], cropper, currentFilter = 'all', clickCount = 0;
 
-        // نظام القص
-        function startCropping(url) {
-            if (!url) return;
+        // ميزة قص الصورة اليدوية
+        function manualCropTrigger() {
+            const url = document.getElementById('p-img').value;
+            if(!url || url === "" || url.includes("data:image")) {
+                alert("يرجى وضع رابط صورة صالح أولاً");
+                return;
+            }
             document.getElementById('cropper-wrapper').style.display = 'block';
             const img = document.getElementById('image-to-crop');
             img.src = url;
             if (cropper) cropper.destroy();
-            setTimeout(() => { cropper = new Cropper(img, { aspectRatio: 1, viewMode: 1 }); }, 300);
+            setTimeout(() => {
+                cropper = new Cropper(img, {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                    background: false
+                });
+            }, 300);
         }
 
         function confirmCrop() {
-            const canvas = cropper.getCroppedCanvas({ width: 500, height: 500 });
+            const canvas = cropper.getCroppedCanvas({ width: 600, height: 600 });
             document.getElementById('cropped-image-data').value = canvas.toDataURL('image/jpeg', 0.8);
             document.getElementById('cropper-wrapper').style.display = 'none';
-            alert("تم معالجة الصورة!");
+            alert("تم القص بنجاح! سيتم استخدام النسخة المقصوصة عند الحفظ.");
         }
 
-        // جلب المنتجات والمجلدات
+        // جلب البيانات
         db.ref('categories').on('value', snap => {
             allCategories = snap.val() || {};
             renderCategories();
@@ -189,25 +178,26 @@
             renderAdminProducts();
         });
 
-        // إصلاح عرض الطلبات (undefined)
+        // إصلاح عرض الطلبات الواردة بشكل نهائي
         db.ref('orders').on('value', snap => {
             const orders = snap.val() || {};
             const list = document.getElementById('orders-list');
             list.innerHTML = Object.keys(orders).map(id => {
                 const o = orders[id];
+                // استخدام الأسماء التي يرسلها النظام (customer_name و total_price)
                 return `
                 <div class="bg-slate-800 p-4 rounded-lg border-r-4 border-amber-500 shadow-md">
-                    <div class="flex justify-between font-bold text-amber-500 mb-1">
+                    <div class="flex justify-between items-center font-bold text-amber-500 mb-2">
                         <span>الزبون: ${o.customer_name || 'غير معروف'}</span>
-                        <span class="text-white">${o.customer_phone || ''}</span>
+                        <span class="text-white text-sm">${o.customer_phone || ''}</span>
                     </div>
-                    <div class="text-xs text-slate-300 my-2 bg-black/20 p-2 rounded">${o.items_list || ''}</div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-green-500 font-bold">${o.total_price || 0} د.ج</span>
-                        <button onclick="db.ref('orders/${id}').remove()" class="text-red-500 text-xs font-bold underline">تم التسليم - حذف</button>
+                    <div class="text-xs text-slate-300 bg-black/30 p-2 rounded mb-2">${o.items_list || 'لا توجد سلع'}</div>
+                    <div class="flex justify-between items-center border-t border-slate-700 pt-2">
+                        <span class="text-green-400 font-bold">المجموع: ${o.total_price || 0} د.ج</span>
+                        <button onclick="db.ref('orders/${id}').remove()" class="text-red-500 text-xs font-bold bg-red-500/10 px-2 py-1 rounded">تم التسليم - حذف</button>
                     </div>
                 </div>`;
-            }).join('');
+            }).reverse().join('');
         });
 
         function renderProducts() {
@@ -219,9 +209,11 @@
                 const matchesCat = currentFilter === 'all' || (p.categories && p.categories.includes(currentFilter));
                 if(matchesSearch && matchesCat) {
                     return `
-                    <div class="product-card flex flex-col">
-                        <img src="${p.img}" class="h-40 w-full object-contain bg-white rounded-lg mb-4 p-2 shadow-inner">
-                        <h3 class="font-bold text-sm mb-2 h-10 overflow-hidden text-amber-500">${p.name}</h3>
+                    <div class="product-card flex flex-col h-full">
+                        <div class="bg-white rounded-lg p-2 mb-4 h-48 flex items-center justify-center overflow-hidden">
+                            <img src="${p.img}" class="max-h-full max-w-full object-contain">
+                        </div>
+                        <h3 class="font-bold text-sm mb-2 text-amber-500 h-10 overflow-hidden">${p.name}</h3>
                         <p class="text-white font-bold text-xl mb-4">${p.price} د.ج</p>
                         <button onclick="addToCart('${id}')" class="mt-auto bg-amber-500 text-black font-bold py-2 rounded-lg hover:bg-amber-400 transition">أضف للسلة</button>
                     </div>`;
@@ -237,15 +229,18 @@
             const original = document.getElementById('p-img').value;
             const cats = Array.from(document.querySelectorAll('input[name="p-cats"]:checked')).map(cb => cb.value);
 
-            const imgToSave = cropped || original;
+            // نأخذ المقصوصة إذا وجدت، وإلا نأخذ الأصلية
+            const finalImg = (cropped && cropped !== "") ? cropped : original;
 
-            if(name && price && imgToSave && cats.length > 0) {
-                const data = { name, price, img: imgToSave, categories: cats };
+            if(name && price && finalImg && cats.length > 0) {
+                const data = { name, price, img: finalImg, categories: cats };
                 if(id) db.ref('products/' + id).update(data);
                 else db.ref('products').push(data);
                 resetForm();
-                alert("تم الحفظ!");
-            } else { alert("أكمل كل البيانات!"); }
+                alert("تم الحفظ بنجاح!");
+            } else {
+                alert("يرجى ملء جميع الحقول واختيار مجلد واحد على الأقل");
+            }
         }
 
         function editProduct(id) {
@@ -253,7 +248,6 @@
             document.getElementById('edit-product-id').value = id;
             document.getElementById('p-name').value = p.name;
             document.getElementById('p-price').value = p.price;
-            // هنا قمت بالتعديل ليظهر الرابط الحقيقي بدلاً من "صورة مخزنة"
             document.getElementById('p-img').value = p.img.startsWith('data') ? "صورة مقصوصة مسبقاً" : p.img;
             document.getElementById('form-title').innerText = "تعديل: " + p.name;
             document.getElementById('submit-btn').innerText = "تحديث الآن";
@@ -262,7 +256,7 @@
             document.querySelectorAll('input[name="p-cats"]').forEach(cb => {
                 cb.checked = p.categories && p.categories.includes(cb.value);
             });
-            window.scrollTo(0,0);
+            window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
         function resetForm() {
@@ -271,7 +265,7 @@
             document.getElementById('p-price').value = "";
             document.getElementById('p-img').value = "";
             document.getElementById('cropped-image-data').value = "";
-            document.getElementById('form-title').innerText = "إضافة منتج جديد:";
+            document.getElementById('form-title').innerText = "إضافة منتج جديد";
             document.getElementById('submit-btn').innerText = "حفظ المنتج";
             document.getElementById('cancel-edit').classList.add('hidden');
             document.querySelectorAll('input[name="p-cats"]').forEach(cb => cb.checked = false);
@@ -282,10 +276,10 @@
         function renderAdminProducts() {
             document.getElementById('admin-products-list').innerHTML = Object.keys(allProducts).map(id => `
                 <div class="bg-slate-900 p-2 rounded text-[10px] border border-slate-700 flex flex-col gap-1">
-                    <span class="truncate">${allProducts[id].name}</span>
+                    <span class="truncate font-bold">${allProducts[id].name}</span>
                     <div class="flex justify-between">
-                        <button onclick="editProduct('${id}')" class="text-blue-400 font-bold">تعديل</button>
-                        <button onclick="if(confirm('حذف؟')) db.ref('products/${id}').remove()" class="text-red-500 font-bold">حذف</button>
+                        <button onclick="editProduct('${id}')" class="text-blue-400 font-bold bg-blue-500/10 px-2 py-1 rounded">تعديل</button>
+                        <button onclick="if(confirm('هل تريد الحذف؟')) db.ref('products/${id}').remove()" class="text-red-500 font-bold bg-red-500/10 px-2 py-1 rounded">حذف</button>
                     </div>
                 </div>
             `).join('');
@@ -302,7 +296,7 @@
 
         function updateCatCheckboxes() {
             document.getElementById('cat-checkboxes').innerHTML = Object.values(allCategories).map(c => `
-                <label class="text-xs flex items-center gap-1"><input type="checkbox" name="p-cats" value="${c}"> ${c}</label>
+                <label class="text-xs flex items-center gap-1 cursor-pointer"><input type="checkbox" name="p-cats" value="${c}"> ${c}</label>
             `).join('');
         }
 
@@ -315,9 +309,10 @@
             const total = cart.reduce((s, i) => s + parseInt(i.price), 0);
             document.getElementById('cart-total').innerText = total;
             document.getElementById('cart-items').innerHTML = cart.map((i, idx) => `
-                <div class="flex justify-between text-xs border-b border-slate-700 pb-1">
-                    <span>${i.name}</span>
-                    <button onclick="cart.splice(${idx},1);updateCartUI()" class="text-red-500 font-bold">X</button>
+                <div class="flex justify-between items-center text-xs border-b border-slate-700 pb-2">
+                    <span class="w-2/3 truncate">${i.name}</span>
+                    <span class="font-bold text-amber-500">${i.price} د.ج</span>
+                    <button onclick="cart.splice(${idx},1);updateCartUI()" class="text-red-500 bg-red-500/10 w-6 h-6 rounded">×</button>
                 </div>
             `).join('');
         }
@@ -334,9 +329,9 @@
                     items_list: list,
                     total_price: total
                 });
-                alert("تم إرسال طلبيتك بنجاح!");
+                alert("تم إرسال طلبك! شكراً لك.");
                 cart = []; updateCartUI(); toggleCart();
-            } else { alert("يرجى إدخال الاسم والهاتف"); }
+            } else { alert("يرجى ملء الاسم ورقم الهاتف أولاً"); }
         }
 
         function toggleCart() {
@@ -349,6 +344,7 @@
             if(clickCount === 5) {
                 if(prompt("كلمة السر:") === "yacin..yacin.") {
                     document.getElementById('admin-panel').style.display = 'block';
+                    window.scrollTo({top: 0, behavior: 'smooth'});
                 }
                 clickCount = 0;
             }
@@ -357,3 +353,4 @@
     </script>
 </body>
 </html>
+
