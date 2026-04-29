@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TRUST HARDWARE | ثقة وضمان</title>
     
-    <!-- إضافة اللوغو في ترويسة المتصفح (Favicon) -->
+    <!-- اللوغو في ترويسة المتصفح -->
     <link rel="icon" type="image/jpg" href="https://scontent.floo1-2.fna.fbcdn.net/v/t39.30808-1/682006759_122095180376344266_5380399349240977356_n.jpg?stp=dst-jpg_s160x160_tt6&_nc_cat=104&ccb=1-7&_nc_sid=1d2534&_nc_ohc=F8ArBc2in4EQ7kNvwE59jEr&_nc_oc=AdqSQL9UW2FqvMmynIS3b37eom0-7urCMfI_exNmQI6jFgPBaGKlTXf6n0n4kbbp_E0&_nc_zt=24&_nc_ht=scontent.floo1-2.fna&_nc_gid=Tn2WacjLMDww-TRhwhXfBA&_nc_ss=7b2a8&oh=00_Af3Zi8oEiwkhfktys-FC-pbJ5jPVQXbpR0mp8Sju-TaCTg&oe=69F59C1A">
 
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -54,7 +54,7 @@
 
     <div id="categories-bar" class="flex gap-3 p-4 overflow-x-auto justify-center bg-slate-800/50"></div>
 
-    <!-- لوحة الإدارة المحدثة -->
+    <!-- لوحة الإدارة مع ميزة التعديل المكتملة -->
     <section id="admin-panel" class="admin-section">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold text-amber-500">لوحة الإدارة</h2>
@@ -70,7 +70,6 @@
                 <input type="number" id="p-price" placeholder="السعر (د.ج)" class="order-input text-center">
                 <input type="text" id="p-img" placeholder="رابط الصورة" class="order-input text-center">
                 
-                <!-- إضافة الخيار الجديد هنا -->
                 <input type="text" id="p-requirement" placeholder="طلب خاص؟ (مثلاً: اكتب اللون، المقاس..)" class="order-input text-center border-dashed border-amber-500">
                 
                 <button onclick="manualCropTrigger()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-lg mb-3 shadow">
@@ -86,14 +85,15 @@
                 <input type="hidden" id="cropped-image-data">
 
                 <button id="submit-btn" onclick="saveProduct()" class="w-full bg-amber-500 text-black font-bold py-3 rounded-lg mt-1 text-xl shadow-lg">حفظ المنتج</button>
+                <button onclick="resetForm()" class="w-full mt-2 text-slate-400 text-xs">إلغاء التعديل / تفريغ الخانات</button>
                 
-                <div class="mt-6 border-t border-slate-700 pt-4">
-                    <h4 class="text-amber-500 text-sm mb-2 font-bold">إدارة المجلدات:</h4>
+                <div class="mt-6 border-t border-slate-700 pt-4 text-xs">
+                    <h4 class="text-amber-500 mb-2 font-bold">إدارة المجلدات:</h4>
                     <div class="flex gap-2">
                         <input type="text" id="new-cat-name" placeholder="اسم المجلد" class="order-input text-sm mb-0">
-                        <button onclick="addCategory()" class="bg-green-600 px-4 rounded text-xs font-bold">إضافة</button>
+                        <button onclick="addCategory()" class="bg-green-600 px-4 rounded font-bold">إضافة</button>
                     </div>
-                    <div id="admin-cats-list" class="flex flex-wrap gap-2 mt-3 text-xs"></div>
+                    <div id="admin-cats-list" class="flex flex-wrap gap-2 mt-3"></div>
                 </div>
             </div>
 
@@ -101,6 +101,12 @@
                 <h3 class="text-amber-500 font-bold mb-4 italic text-center underline">الطلبات الواردة:</h3>
                 <div id="orders-list" class="space-y-4 max-h-[600px] overflow-y-auto p-2"></div>
             </div>
+        </div>
+
+        <!-- قائمة المنتجات للتعديل والحذف -->
+        <div class="mt-8 border-t border-slate-700 pt-5">
+            <h3 class="text-amber-500 font-bold mb-4 text-sm underline">قائمة جميع المنتجات:</h3>
+            <div id="admin-products-list" class="grid grid-cols-2 md:grid-cols-6 gap-3"></div>
         </div>
     </section>
 
@@ -113,13 +119,11 @@
         <span id="cart-count">0</span> | <span id="cart-total">0</span> د.ج
     </div>
 
-    <!-- مودال تأكيد الطلب المطور -->
+    <!-- مودال تأكيد الطلب -->
     <div id="cart-modal" class="modal">
         <div class="bg-slate-800 p-6 rounded-2xl w-full max-w-lg border border-amber-500 relative shadow-2xl">
             <h2 class="text-2xl font-bold text-amber-500 mb-4 text-center">تأكيد الطلبية</h2>
-            
             <div id="cart-items" class="mb-4 space-y-2 max-h-32 overflow-y-auto bg-slate-900 p-3 rounded text-sm border border-slate-700 text-right"></div>
-
             <div id="custom-requirements-area" class="mb-4"></div>
 
             <div class="grid grid-cols-2 gap-2 mb-2">
@@ -140,12 +144,12 @@
                 <input type="text" id="cust-address" placeholder="عنوان المنزل بالتفصيل" class="order-input border-amber-500 border-2">
             </div>
 
-            <div class="bg-amber-500/10 border border-amber-500/30 p-3 rounded-lg mb-4 text-[11px] leading-relaxed text-slate-300">
+            <div class="bg-amber-500/10 border border-amber-500/30 p-3 rounded-lg mb-4 text-[11px] text-slate-300">
                 <p class="font-bold text-amber-500 mb-1 italic">المعاهدة:</p>
                 {والمُوفُون بعَهْدِهِمْ إذَا عَاهَدُوا}. نرجو إعلامنا إذا حدث تأخير لأكثر من 3 أيام.
             </div>
 
-            <button onclick="sendOrder()" class="w-full bg-green-600 py-4 rounded-xl font-bold text-lg hover:bg-green-500 transition shadow-lg text-white">إتمام الحجز</button>
+            <button onclick="sendOrder()" class="w-full bg-green-600 py-4 rounded-xl font-bold text-lg hover:bg-green-500 transition text-white">إتمام الحجز</button>
             <button onclick="toggleCart()" class="w-full mt-4 text-slate-400 text-sm">إلغاء</button>
         </div>
     </div>
@@ -185,6 +189,30 @@
             renderAdminProducts();
         });
 
+        db.ref('orders').on('value', snap => {
+            const orders = snap.val() || {};
+            const list = document.getElementById('orders-list');
+            list.innerHTML = Object.keys(orders).map(id => {
+                const o = orders[id];
+                return `
+                <div class="o-card border border-slate-700">
+                    <div class="flex justify-between font-bold text-amber-500 mb-1">
+                        <span>الزبون: ${o.customer_name}</span>
+                        <span class="text-white">${o.customer_phone}</span>
+                    </div>
+                    <div class="text-[10px] text-slate-400 grid grid-cols-2 gap-x-2 mb-2 bg-slate-800 p-2 rounded">
+                        <span>الولاية: ${o.state}</span><span>البلدية: ${o.city}</span>
+                        <span class="col-span-2 text-white">التوصيل: ${o.delivery} ${o.address ? '- العنوان: '+o.address : ''}</span>
+                    </div>
+                    <div class="bg-black/30 p-2 rounded text-[11px] mb-2 border border-slate-700">${o.items_list}</div>
+                    <div class="flex justify-between items-center border-t border-slate-700 pt-2">
+                        <span class="text-green-400 font-bold">المجموع: ${o.total_price} د.ج</span>
+                        <button onclick="db.ref('orders/${id}').remove()" class="bg-red-500/20 text-red-500 px-3 py-1 rounded text-xs font-bold">حذف</button>
+                    </div>
+                </div>`;
+            }).reverse().join('');
+        });
+
         function saveProduct() {
             const id = document.getElementById('edit-product-id').value;
             const cropped = document.getElementById('cropped-image-data').value;
@@ -192,14 +220,40 @@
                 name: document.getElementById('p-name').value,
                 price: document.getElementById('p-price').value,
                 img: (cropped && cropped !== "") ? cropped : document.getElementById('p-img').value,
-                requirement: document.getElementById('p-requirement').value, // حفظ المتطلب الجديد
+                requirement: document.getElementById('p-requirement').value,
                 categories: Array.from(document.querySelectorAll('input[name="p-cats"]:checked')).map(cb => cb.value)
             };
             if(data.name && data.price && data.img) {
                 if(id) db.ref('products/' + id).update(data);
                 else db.ref('products').push(data);
                 resetForm();
+                alert("تم حفظ التعديلات!");
             }
+        }
+
+        function editProduct(id) {
+            const p = allProducts[id];
+            document.getElementById('edit-product-id').value = id;
+            document.getElementById('p-name').value = p.name;
+            document.getElementById('p-price').value = p.price;
+            document.getElementById('p-img').value = p.img.startsWith('data') ? "صورة مقصوصة" : p.img;
+            document.getElementById('p-requirement').value = p.requirement || "";
+            document.querySelectorAll('input[name="p-cats"]').forEach(cb => {
+                cb.checked = p.categories && p.categories.includes(cb.value);
+            });
+            document.getElementById('form-title').innerText = "تعديل المنتج الحالي";
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function renderAdminProducts() {
+            document.getElementById('admin-products-list').innerHTML = Object.keys(allProducts).map(id => `
+                <div class="bg-slate-900 p-2 rounded text-[9px] border border-slate-700 text-center">
+                    <span class="truncate block font-bold mb-1">${allProducts[id].name}</span>
+                    <div class="flex gap-1">
+                        <button onclick="editProduct('${id}')" class="bg-blue-600 px-2 py-1 rounded w-full">تعديل</button>
+                        <button onclick="if(confirm('حذف نهائي؟')) db.ref('products/${id}').remove()" class="bg-red-600 px-2 py-1 rounded w-full">×</button>
+                    </div>
+                </div>`).join('');
         }
 
         function renderProducts() {
@@ -208,13 +262,7 @@
             grid.innerHTML = Object.keys(allProducts).map(id => {
                 const p = allProducts[id];
                 if(p.name.toLowerCase().includes(search) && (currentFilter === 'all' || (p.categories && p.categories.includes(currentFilter)))) {
-                    return `
-                    <div class="product-card flex flex-col h-full">
-                        <div class="bg-white rounded-lg p-2 mb-4 h-48 flex items-center justify-center overflow-hidden"><img src="${p.img}" class="max-h-full"></div>
-                        <h3 class="font-bold text-sm mb-2 text-amber-500 h-10 overflow-hidden">${p.name}</h3>
-                        <p class="text-white font-bold text-xl mb-4">${p.price} د.ج</p>
-                        <button onclick="addToCart('${id}')" class="bg-amber-500 text-black font-bold py-2 rounded-lg">أضف للسلة</button>
-                    </div>`;
+                    return `<div class="product-card flex flex-col h-full"><div class="bg-white rounded-lg p-2 mb-4 h-48 flex items-center justify-center"><img src="${p.img}" class="max-h-full"></div><h3 class="font-bold text-sm mb-2 text-amber-500 h-10 overflow-hidden">${p.name}</h3><p class="text-white font-bold text-xl mb-4">${p.price} د.ج</p><button onclick="addToCart('${id}')" class="bg-amber-500 text-black font-bold py-2 rounded-lg">أضف للسلة</button></div>`;
                 }
             }).join('');
         }
@@ -224,35 +272,20 @@
         function updateCartUI() {
             document.getElementById('cart-count').innerText = cart.length;
             document.getElementById('cart-total').innerText = cart.reduce((s, i) => s + parseInt(i.price), 0);
-            
-            // عرض خانات المتطلبات الخاصة للمنتجات في السلة
             const reqArea = document.getElementById('custom-requirements-area');
             reqArea.innerHTML = "";
             cart.forEach((item, idx) => {
                 if(item.requirement && item.requirement.trim() !== "") {
-                    reqArea.innerHTML += `
-                    <div class="bg-slate-700/50 p-2 rounded mb-2 border-r-2 border-blue-500">
-                        <label class="text-[10px] text-blue-300 block mb-1">${item.name}:</label>
-                        <input type="text" placeholder="${item.requirement}" class="order-input text-sm custom-req-input" data-idx="${idx}">
-                    </div>`;
+                    reqArea.innerHTML += `<div class="bg-slate-700/50 p-2 rounded mb-2 border-r-2 border-blue-500"><label class="text-[10px] text-blue-300 block mb-1">${item.name}:</label><input type="text" placeholder="${item.requirement}" class="order-input text-sm custom-req-input" data-idx="${idx}"></div>`;
                 }
             });
-
-            document.getElementById('cart-items').innerHTML = cart.map((i, idx) => `
-                <div class="flex justify-between items-center border-b border-slate-700 pb-1">
-                    <span class="truncate w-3/4 text-[11px]">${i.name}</span>
-                    <button onclick="cart.splice(${idx},1);updateCartUI()" class="text-red-500">×</button>
-                </div>`).join('');
+            document.getElementById('cart-items').innerHTML = cart.map((i, idx) => `<div class="flex justify-between items-center border-b border-slate-700 pb-1"><span class="truncate w-3/4 text-[11px]">${i.name}</span><button onclick="cart.splice(${idx},1);updateCartUI()" class="text-red-500">×</button></div>`).join('');
         }
 
         function sendOrder() {
             const name = document.getElementById('cust-name').value;
             const phone = document.getElementById('cust-phone').value;
-            const delivery = document.getElementById('delivery-type').value;
-            const address = document.getElementById('cust-address').value;
-
             if(name && phone && cart.length > 0) {
-                // تجميع المتطلبات الخاصة المكتوبة
                 const reqInputs = document.querySelectorAll('.custom-req-input');
                 let finalItemsList = "";
                 cart.forEach((item, idx) => {
@@ -260,36 +293,35 @@
                     reqInputs.forEach(input => { if(parseInt(input.dataset.idx) === idx) reqVal = " (" + input.value + ")"; });
                     finalItemsList += item.name + reqVal + " | ";
                 });
-
                 db.ref('orders').push({
-                    customer_name: name,
-                    customer_phone: phone,
-                    state: document.getElementById('cust-state').value,
-                    city: document.getElementById('cust-city').value,
-                    delivery: delivery,
-                    address: address,
-                    items_list: finalItemsList,
-                    total_price: document.getElementById('cart-total').innerText,
-                    date: new Date().toLocaleString('ar-DZ')
+                    customer_name: name, customer_phone: phone, state: document.getElementById('cust-state').value,
+                    city: document.getElementById('cust-city').value, delivery: document.getElementById('delivery-type').value,
+                    address: document.getElementById('cust-address').value, items_list: finalItemsList,
+                    total_price: document.getElementById('cart-total').innerText, date: new Date().toLocaleString('ar-DZ')
                 });
                 alert("تم استلام طلبك بنجاح!");
                 cart = []; updateCartUI(); toggleCart();
             }
         }
 
-        // الوظائف المساعدة (نفس السكريبت السابق)
         function handleSecretClick() { clickCount++; if(clickCount === 5) { if(prompt("الباسورد:") === "yacin..yacin.") document.getElementById('admin-panel').style.display = 'block'; clickCount = 0; } }
         function closeAdmin() { document.getElementById('admin-panel').style.display = 'none'; }
         function addCategory() { const n = document.getElementById('new-cat-name').value; if(n) db.ref('categories').push(n); }
         function manualCropTrigger() { const url = document.getElementById('p-img').value; if(!url) return; document.getElementById('cropper-wrapper').style.display = 'block'; const img = document.getElementById('image-to-crop'); img.src = url; if (cropper) cropper.destroy(); setTimeout(() => { cropper = new Cropper(img, { aspectRatio: 1 }); }, 300); }
-        function confirmCrop() { const canvas = cropper.getCroppedCanvas({ width: 600, height: 600 }); document.getElementById('cropped-image-data').value = canvas.toDataURL('image/jpeg'); document.getElementById('cropper-wrapper').style.display = 'none'; alert("تم!"); }
+        function confirmCrop() { const canvas = cropper.getCroppedCanvas({ width: 600, height: 600 }); document.getElementById('cropped-image-data').value = canvas.toDataURL('image/jpeg'); document.getElementById('cropper-wrapper').style.display = 'none'; }
         function toggleCart() { const m = document.getElementById('cart-modal'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; }
         function renderCategories() { document.getElementById('categories-bar').innerHTML = `<div onclick="setFilter('all')" class="cat-btn ${currentFilter === 'all' ? 'active' : ''}">الكل</div>` + Object.values(allCategories).map(c => `<div onclick="setFilter('${c}')" class="cat-btn ${currentFilter === c ? 'active' : ''}">${c}</div>`).join(''); }
         function setFilter(c) { currentFilter = c; renderCategories(); renderProducts(); }
         function updateCatCheckboxes() { document.getElementById('cat-checkboxes').innerHTML = Object.values(allCategories).map(c => `<label class="flex items-center gap-1"><input type="checkbox" name="p-cats" value="${c}"> ${c}</label>`).join(''); }
-        function resetForm() { document.getElementById('p-name').value = ""; document.getElementById('p-price').value = ""; document.getElementById('p-img').value = ""; document.getElementById('p-requirement').value = ""; document.getElementById('cropped-image-data').value = ""; }
-        function renderAdminProducts() { document.getElementById('admin-products-list').innerHTML = Object.keys(allProducts).map(id => `<div class="bg-slate-900 p-2 rounded text-[9px] border border-slate-700"><span class="truncate block font-bold">${allProducts[id].name}</span><button onclick="editProduct('${id}')" class="bg-blue-600 px-2 py-1 rounded w-full mt-1">تعديل</button></div>`).join(''); }
-        function editProduct(id) { const p = allProducts[id]; document.getElementById('edit-product-id').value = id; document.getElementById('p-name').value = p.name; document.getElementById('p-price').value = p.price; document.getElementById('p-requirement').value = p.requirement || ""; window.scrollTo(0,0); }
+        function resetForm() { 
+            document.getElementById('edit-product-id').value = ""; 
+            document.getElementById('p-name').value = ""; 
+            document.getElementById('p-price').value = ""; 
+            document.getElementById('p-img').value = ""; 
+            document.getElementById('p-requirement').value = ""; 
+            document.getElementById('cropped-image-data').value = "";
+            document.getElementById('form-title').innerText = "إضافة / تعديل منتج";
+        }
     </script>
 </body>
 </html>
